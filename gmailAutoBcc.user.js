@@ -4,6 +4,7 @@
  *  $Id$
  *  $Author$
  *  $Date$
+ *  $Version: $
  *  Copyright (c) 2005, Jaidev Krishna S
  *  Released under the GPL license
  *  http://www.gnu.org/copyleft/gpl.html
