@@ -10,7 +10,7 @@
 
 // ==UserScript==
 // @name          Gmail Auto BCC
-// @namespace     http://jaidev.info/home/projects/gmailLabelNone
+// @namespace     http://jaidev.info/home/projects/gmailUnlabelled
 // @description   This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations
 // @include       http*://mail.google.com/*
 // ==/UserScript==
