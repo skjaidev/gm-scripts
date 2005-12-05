@@ -20,6 +20,7 @@
 // gBccMail = email Address		Email address to BCC to
 // gBccEnabled = true / false		
 // gBccPopup = true / false	Pops up a prompt before adding BCC
+// gBccHeader = "bcc"		Header to add. By default BCC.
 
 document.addEventListener ('click', function(event) {
 	if (event.target.getAttribute ("id") == "send") {
@@ -46,13 +47,18 @@ document.addEventListener ('click', function(event) {
 		else if (popup != false) {
 			GM_setValue ('gBccPopup', false); // FALSE by default
 		}
+		var header = GM_getValue ('gBccHeader');
+		if (!header || !(header == "cc" || header == "bcc")) {
+			header = "bcc";
+			GM_setValue ('gBccHeader', "bcc");
+		}
 		var msg_type = event.target.form.parentNode.getAttribute("id");
 		var bcc_id;
 		if (msg_type == "cm_compose") {
-			bcc_id = "bcc_compose";
+			bcc_id = header + "_compose";
 		}
 		else {
-			bcc_id = "bcc_"+ msg_type.substr (3,1);
+			bcc_id = header + "_" + msg_type.substr (3);
 		}
 		var bcc_field = document.getElementById (bcc_id);
 		if (bcc_field) { 
