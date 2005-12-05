@@ -1,4 +1,4 @@
-/* This greasemonkey script automatically BCCs outgoing email from a gmail address to a 
+/* This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a 
  *  specified email address
  * 
  *  $Id$
@@ -13,7 +13,7 @@
 // ==UserScript==
 // @name          Gmail Auto BCC
 // @namespace     http://jaidev.info/home/projects/gmailAutoBcc
-// @description   This greasemonkey script automatically BCCs outgoing email from a gmail address to a specified email address
+// @description   This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address
 // @include       http*://mail.google.com/mail/*
 // ==/UserScript==
 
