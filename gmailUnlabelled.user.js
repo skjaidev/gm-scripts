@@ -37,7 +37,8 @@ function process_frame (id)
 		}, true);
 	}
 }
-
 process_frame ('v1');
 process_frame ('v2');
+process_frame ('v3');
+process_frame ('v4');
 
