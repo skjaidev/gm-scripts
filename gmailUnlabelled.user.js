@@ -28,7 +28,7 @@ function process_frame (id)
 					if (edit_labels) {
 						var label_none = edit_labels.cloneNode (true);
 						label_none.setAttribute ("id", "label_none");
-						label_none.setAttribute ("onclick", "var iter = this; var str = ''; while (iter.previousSibling != null) { iter = iter.previousSibling; str = str + ' -label:' + iter.getAttribute('id').substr(3).replace(/[/\ ]/g, '-'); }var s = document.getElementById ('s'); s.elements.namedItem('q').value = str; return top.js._MH_OnSearch(window,0);");
+						label_none.setAttribute ("onclick", "var iter = this; var str = ''; while (iter.previousSibling != null) { iter = iter.previousSibling; str = str + ' -label:' + iter.getAttribute('id').substr(3).replace(/[/\ &]/g, '-'); }var s = document.getElementById ('s'); s.elements.namedItem('q').value = str; return top.js._MH_OnSearch(window,0);");
 						label_none.innerHTML = "Unlabelled";
 						edit_labels.parentNode.insertBefore (label_none, edit_labels);
 					}
