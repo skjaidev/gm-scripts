@@ -23,7 +23,7 @@
 // gBccHeader = "bcc"		Header to add. By default BCC.
 
 document.addEventListener ('click', function(event) {
-	if (event.target.getAttribute ("id") == "snd") {
+	if (event.target.getAttribute ("id") == "snd" || event.target.getAttribute ("id") == "send") {
 		enabled = GM_getValue('gBccEnabled');
 		if (enabled == false) {
 			return;
