@@ -36,7 +36,7 @@ if(s) {
 //	tam.insertBefore (findUnlabelled, tam.firstChild.nextSibling.nextSibling);
 //}
 
-window.setInterval (function () {
+function gmailUnlabelled () {
 	if (!document.getElementById ('label_none')) {
 		var edit_labels = document.getElementById ('prf_l');
 		if (edit_labels) {
@@ -47,5 +47,7 @@ window.setInterval (function () {
 			edit_labels.parentNode.insertBefore (label_none, edit_labels);
 		}
 	}
-}, 1000);
+}
+var gu = window.setInterval (gmailUnlabelled, 1000);
+
 
