@@ -31,13 +31,34 @@ document.addEventListener ('click', function(event) {
 		else if (enabled != true) {
 			GM_setValue('gBccEnabled', true);
 			GM_setValue('gBccPopup', false); // FALSE by default
+			GM_setValue('gBccMapFromAddress', false); // FALSE by default
 			enabled = true;
-
 		}
-		var email = GM_getValue('gBccMail');
-		if (!email) {
-			email = prompt("gmailAutoBcc: Where do you want to bcc all your outgoing gmail?");
-			GM_setValue('gBccMail', email);
+		var mapFrom = GM_getValue ('gBccMapFromAddress');
+		if (mapFrom == true) {
+			var from = event.target.form.elements['from'].value;
+			var email = GM_getValue ('gBccMail_' + from);
+			if (email == "disabled")
+				return;
+			if (!email) {
+				email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
+				if (!email) {
+					GM_setValue ('gBccMail_' + from, "disabled");
+					return;
+				}
+				GM_setValue ('gBccMail_' + from, email);
+			}
+		}
+		else {
+			var email = GM_getValue('gBccMail');
+			if (!email) {
+				email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
+				if (!email) 
+					return;
+				GM_setValue('gBccMail', email);
+			}
+			if (mapFrom != false) 
+				GM_setValue('gBccMapFromAddress', false); // FALSE by default
 		}
 		var popup = GM_getValue ('gBccPopup');
 		if (popup == true) {
