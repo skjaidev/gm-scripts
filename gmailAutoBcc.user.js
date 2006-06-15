@@ -24,7 +24,7 @@
 
 document.addEventListener ('click', function(event) {
 	if (event.target.getAttribute ("id") == "snd" || event.target.getAttribute ("id") == "send") {
-		enabled = GM_getValue('gBccEnabled');
+		var enabled = GM_getValue('gBccEnabled');
 		if (enabled == false) {
 			return;
 		}
