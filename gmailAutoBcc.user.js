@@ -36,7 +36,7 @@ document.addEventListener ('click', function(event) {
 		}
 		var mapFrom = GM_getValue ('gBccMapFromAddress');
 		if (mapFrom == true) {
-			var from = event.target.form.elements['from'].value;
+			var from = event.target.form.elements.namedItem('from').value;
 			var email = GM_getValue ('gBccMail_' + from);
 			if (email == "disabled")
 				return;
