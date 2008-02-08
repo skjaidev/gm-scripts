@@ -37,7 +37,8 @@ window.addEventListener('load', function() {
                         var tr = table_div.firstChild.firstChild.firstChild;
                         var QUERY_STR = "";
                         while (tr) {
-                            QUERY_STR = QUERY_STR + ' -label:' + tr.firstChild.firstChild.firstChild.getAttribute('id').substr(4).replace(/[/\ &]/g, '-');
+                            var label = tr.firstChild.nextSibling.firstChild.getAttribute('name');
+                            QUERY_STR = QUERY_STR + ' -label:' + label.replace(/[/\ &]/g, '-');
                             tr = tr.nextSibling;
                         }
                         var search_div = this.ownerDocument.getElementById("search_div");
@@ -54,7 +55,8 @@ window.addEventListener('load', function() {
                             var tr = table_div.firstChild.firstChild.firstChild;
                             var QUERY_STR = "";
                             while (tr) {
-                                QUERY_STR = QUERY_STR + ' -label:' + tr.firstChild.firstChild.firstChild.getAttribute('id').substr(4).replace(/[/\ &]/g, '-');
+                                var label = tr.firstChild.nextSibling.firstChild.getAttribute('name');
+                                QUERY_STR = QUERY_STR + ' -label:' + label.replace(/[/\ &]/g, '-');
                                 tr = tr.nextSibling;
                             }
                             this.value=QUERY_STR;
