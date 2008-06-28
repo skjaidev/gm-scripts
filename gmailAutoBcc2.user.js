@@ -37,6 +37,7 @@ window.addEventListener('load', function() {
                     else if (event.target.parentNode.getAttribute ("class") == SEND_BUTTON2_DIV_CLASS) {
                         click = 2;
                     }
+                    else return;
                     if (click != 0) {
                         var enabled = GM_getValue('gBccEnabled');
 	        	        if (enabled == false) {
@@ -63,10 +64,18 @@ window.addEventListener('load', function() {
 		                	GM_setValue ('gBccHeader', "bcc");
 		                }
                         var dest_tr = "";
+                        if (form_div.firstChild.elements.namedItem('from')) {
                         if (header == "cc")
                             dest_tr = form_div.firstChild.firstChild.firstChild.firstChild.nextSibling.nextSibling;
                         else 
                             dest_tr = form_div.firstChild.firstChild.firstChild.firstChild.nextSibling.nextSibling.nextSibling;
+                        }
+                        else {
+                        if (header == "cc")
+                            dest_tr = form_div.firstChild.firstChild.firstChild.firstChild.nextSibling;
+                        else 
+                            dest_tr = form_div.firstChild.firstChild.firstChild.firstChild.nextSibling.nextSibling;
+                        }
                         var dst_field = dest_tr.lastChild.firstChild;
 		                if (!(dst_field && (dst_field.getAttribute ("gid") != "gBccDone") || dst_field.value == ""))  {
                             /* TBD: Change last cond to if_contains (email) */
