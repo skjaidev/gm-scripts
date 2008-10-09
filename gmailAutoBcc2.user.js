@@ -28,14 +28,22 @@ window.addEventListener('load', function() {
             function gBccInit () {
                 var root = gmail.getNavPaneElement().ownerDocument;
                 root.addEventListener ('click', function(event) {
-                    var SEND_BUTTON1_DIV_CLASS = "LlWyA c1I77d";
-                    var SEND_BUTTON2_DIV_CLASS = "CoUvaf c1I77d";
+                    var SEND_BUTTON1_DIV_CLASS = "c1I77d yCMBJb goog-container";
+                    var TOP_SEND_DIV_CLASS = "LlWyA";
+                    var BOT_SEND_DIV_CLASS = "CoUvaf";
+
                     var click = 0;
-                	if (event.target.parentNode.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
-                        click = 1;
-                    }
-                    else if (event.target.parentNode.getAttribute ("class") == SEND_BUTTON2_DIV_CLASS) {
-                        click = 2;
+                	if (event.target.parentNode.getAttribute ("class") == 
+                            SEND_BUTTON1_DIV_CLASS) {
+                        if (event.target.firstChild.innerHTML != "Send") 
+                            return;
+                        if (event.target.parentNode.parentNode.getAttribute 
+                                ("class") == TOP_SEND_DIV_CLASS) {
+                            click = 1;
+                        }
+                        else {
+                            click = 2;
+                        }
                     }
                     else return;
                     if (click != 0) {
@@ -52,10 +60,10 @@ window.addEventListener('load', function() {
                         var form_div = "";
                         switch (click) {
                             case 1:
-                                form_div = event.target.parentNode.nextSibling;
+                                form_div = event.target.parentNode.parentNode.parentNode.nextSibling;
                                 break;
                             case 2:
-                                form_div = event.target.parentNode.previousSibling;
+                                form_div = event.target.parentNode.parentNode.parentNode.previousSibling;
                                 break;
                         }
 		                var header = GM_getValue ('gBccHeader');
