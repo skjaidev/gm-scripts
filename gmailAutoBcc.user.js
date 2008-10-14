@@ -1,9 +1,9 @@
 /* This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a 
  *  specified email address
  * 
- *  $Id$
- *  $Author$
- *  $Date$
+ *  $Id: gmailAutoBcc.user.js,v 1.11 2006/08/03 15:08:58 jaidev Exp jaidev $
+ *  $Author: jaidev $
+ *  $Date: 2006/08/03 15:08:58 $
  *  $Version: $
  *  Copyright (c) 2005, Jaidev Krishna S
  *  Released under the GPL license

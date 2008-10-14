@@ -1,8 +1,8 @@
 /* This greasemonkey script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations
  * 
- *  $Id$
- *  $Author$
- *  $Date$
+ *  $Id: gmailUnlabelled.user.js,v 1.12 2006/06/15 10:23:10 jaidev Exp jaidev $
+ *  $Author: jaidev $
+ *  $Date: 2006/06/15 10:23:10 $
  *  Copyright (c) 2005, Jaidev Krishna S
  *  Released under the GPL license
  *  http://www.gnu.org/copyleft/gpl.html
