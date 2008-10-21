@@ -37,25 +37,26 @@ window.addEventListener('load', function() {
                         var tr = table_div.firstChild.firstChild.firstChild;
                         var QUERY_STR = "";
                         while (tr) {
-                            var label = tr.firstChild.nextSibling.firstChild.getAttribute('name');
+                            var label = tr.firstChild.firstChild.firstChild.firstChild.innerHTML;
                             QUERY_STR = QUERY_STR + ' -label:' + label.replace(/[/\ &]/g, '-');
                             tr = tr.nextSibling;
                         }
+                        alert (QUERY_STR);
                         var search_div = this.ownerDocument.getElementById("search_div");
-                        search_div.firstChild.value = QUERY_STR;
-                        search_div.firstChild.nextSibling.click ();
+                        search_div.parentNode.previousSibling.firstChild.value = QUERY_STR;
+                        search_div.firstChild.click ();
                         }, true);
                     table_div.parentNode.insertBefore(label_none, table_div.nextSibling);
                     expression = ".//div[contains(concat(' ', @class, ' '), ' " + SEARCH_DIV_CLASS + " ')]";
                     var search_div = root.evaluate(expression, root, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext();
                     search_div.setAttribute ("id", "search_div");
-                    search_div.firstChild.addEventListener ("change", function (event) {
+                    search_div.parentNode.previousSibling.firstChild.addEventListener ("change", function (event) {
                         if ("-label" == this.value) { 
                             var table_div = this.ownerDocument.getElementById("label_table_div");
                             var tr = table_div.firstChild.firstChild.firstChild;
                             var QUERY_STR = "";
                             while (tr) {
-                                var label = tr.firstChild.nextSibling.firstChild.getAttribute('name');
+                                var label = tr.firstChild.firstChild.firstChild.firstChild.innerHTML;
                                 QUERY_STR = QUERY_STR + ' -label:' + label.replace(/[/\ &]/g, '-');
                                 tr = tr.nextSibling;
                             }
