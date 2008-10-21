@@ -41,7 +41,6 @@ window.addEventListener('load', function() {
                             QUERY_STR = QUERY_STR + ' -label:' + label.replace(/[/\ &]/g, '-');
                             tr = tr.nextSibling;
                         }
-                        alert (QUERY_STR);
                         var search_div = this.ownerDocument.getElementById("search_div");
                         search_div.parentNode.previousSibling.firstChild.value = QUERY_STR;
                         search_div.firstChild.click ();
