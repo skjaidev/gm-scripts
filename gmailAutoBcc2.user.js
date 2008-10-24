@@ -28,16 +28,16 @@ window.addEventListener('load', function() {
             function gBccInit () {
                 var root = gmail.getNavPaneElement().ownerDocument;
                 root.addEventListener ('click', function(event) {
-                    var SEND_BUTTON1_DIV_CLASS = "c1I77d yCMBJb goog-container";
+                    var SEND_BUTTON1_DIV_CLASS = "c1I77d yCMBJb";
                     var TOP_SEND_DIV_CLASS = "LlWyA";
                     var BOT_SEND_DIV_CLASS = "CoUvaf";
 
                     var click = 0;
-                	if (event.target.parentNode.getAttribute ("class") == 
+                	if (event.target.parentNode.parentNode.getAttribute ("class") == 
                             SEND_BUTTON1_DIV_CLASS) {
                         if (event.target.firstChild.innerHTML != "Send") 
                             return;
-                        if (event.target.parentNode.parentNode.getAttribute 
+                        if (event.target.parentNode.parentNode.parentNode.getAttribute 
                                 ("class") == TOP_SEND_DIV_CLASS) {
                             click = 1;
                         }
@@ -60,10 +60,10 @@ window.addEventListener('load', function() {
                         var form_div = "";
                         switch (click) {
                             case 1:
-                                form_div = event.target.parentNode.parentNode.parentNode.nextSibling;
+                                form_div = event.target.parentNode.parentNode.parentNode.parentNode.nextSibling;
                                 break;
                             case 2:
-                                form_div = event.target.parentNode.parentNode.parentNode.previousSibling;
+                                form_div = event.target.parentNode.parentNode.parentNode.parentNode.previousSibling;
                                 break;
                         }
 		                var header = GM_getValue ('gBccHeader');
@@ -80,9 +80,9 @@ window.addEventListener('load', function() {
                         }
                         else {
                         if (header == "cc")
-                            dest_tr = form_div.firstChild.firstChild.firstChild.firstChild.nextSibling;
+                            dest_tr = form_div.firstChild.firstChild.firstChild.nextSibling.nextSibling.nextSibling;
                         else 
-                            dest_tr = form_div.firstChild.firstChild.firstChild.firstChild.nextSibling.nextSibling;
+                            dest_tr = form_div.firstChild.firstChild.firstChild.nextSibling.nextSibling.nextSibling.nextSibling;
                         }
                         var dst_field = dest_tr.lastChild.firstChild;
 		                if (!(dst_field && (dst_field.getAttribute ("gid") != "gBccDone") || dst_field.value == ""))  {
