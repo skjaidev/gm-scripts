@@ -33,8 +33,6 @@ window.addEventListener('load', function() {
                     var click = 0;
                 	if (event.target.parentNode.parentNode.getAttribute ("class") == 
                             SEND_BUTTON1_DIV_CLASS) {
-                        if (event.target.firstChild.innerHTML != "Send") 
-                            return;
                         if (event.target.parentNode.parentNode.parentNode.getAttribute 
                                 ("class") == TOP_SEND_DIV_CLASS) {
                             click = 1;
