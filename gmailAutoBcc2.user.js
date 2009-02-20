@@ -36,9 +36,11 @@ if (unsafeWindow.gmonkey) {
         var button_div = "";
         var j = event.target;
         var i = 0;
+//        alert (event.target.getAttribute ("class") + event.target.nodeName);
         for (; i < 8 && j != null; i++) {
           if (j.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
             button_div = j;
+//            alert ("found");
             break;
           }
           else
@@ -141,7 +143,7 @@ if (unsafeWindow.gmonkey) {
         dst_field.setAttribute("gid", "gBccDone");
       }, true);
     } /* gBccInit */
-    gBccInit ();
+    window.setTimeout (gBccInit, 500);
     gmail.registerViewChangeCallback (gBccInit);
   });
 }
