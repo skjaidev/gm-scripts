@@ -13,6 +13,7 @@
 // @namespace   http://jaidev.info/home/projects/gmailAutoBcc
 // @description This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/mail/*
+// @include     http*://mail.google.com/a/*
 // ==/UserScript==
 
 // Control parameters -- tweak in about:config
@@ -36,11 +37,9 @@ if (unsafeWindow.gmonkey) {
         var button_div = "";
         var j = event.target;
         var i = 0;
-//        alert (event.target.getAttribute ("class") + event.target.nodeName);
         for (; i < 8 && j != null; i++) {
           if (j.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
             button_div = j;
-//            alert ("found");
             break;
           }
           else
