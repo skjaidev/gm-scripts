@@ -38,7 +38,7 @@ window.addEventListener ('load', function () {
             var QS = "";
             var l = "";
             while (tr) {
-              l = tr.firstChild.firstChild.firstChild.firstChild.innerHTML;
+              l = tr.lastChild.firstChild.getAttribute ('name');
               QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-');
               tr = tr.nextSibling;
             }
@@ -60,7 +60,7 @@ window.addEventListener ('load', function () {
               var QS = "";
               var l = "";
               while (tr) {
-                l = tr.firstChild.firstChild.firstChild.firstChild.innerHTML;
+                l = tr.lastChild.firstChild.getAttribute ('name');
                 QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-');
                 tr = tr.nextSibling;
               }
@@ -79,7 +79,7 @@ window.addEventListener ('load', function () {
               var QS = "";
               var l = "";
               while (tr) {
-                l = tr.firstChild.firstChild.firstChild.firstChild.innerHTML;
+                l = tr.lastChild.firstChild.getAttribute ('name');
                 QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-');
                 tr = tr.nextSibling;
               }
