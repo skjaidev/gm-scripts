@@ -30,20 +30,22 @@ if (unsafeWindow.gmonkey) {
     function gBccInit () {
       var root = gmail.getNavPaneElement().ownerDocument;
       root.addEventListener ('click', function(event) {
-        var SEND_BUTTON1_DIV_CLASS = "c1I77d yCMBJb";
-        var TOP_SEND_DIV_CLASS = "LlWyA";
+        var SEND_BUTTON1_DIV_CLASS = "dW D";
+        var TOP_SEND_DIV_CLASS = "eh";
         var BOT_SEND_DIV_CLASS = "CoUvaf";
         var click = 0;
         var button_div = "";
         var j = event.target;
         var i = 0;
-        for (; i < 8 && j != null; i++) {
+        for (; i < 9 && j != null; i++) {
           if (j.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
+          alert ('found');
             button_div = j;
             break;
           }
-          else
+          else {
             j = j.parentNode;
+          }
         }
         if (!button_div)
           return;
