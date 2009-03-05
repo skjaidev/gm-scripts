@@ -14,7 +14,7 @@
 // @description   This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/*
 // ==/UserScript==
-var LDC = "pvSW6e";
+var LDC = "pO";
 var SIC = "ZRiJh mFwySd";
 var SID = ":ra";
 window.addEventListener ('load', function () {
@@ -27,6 +27,7 @@ window.addEventListener ('load', function () {
               + " ')]";
           var tab_div = root.evaluate (expr, root, null, 
               XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext ();
+          if (null == tab_div) return;
           tab_div.setAttribute ("id", "lb_tbl_div");
           var label_none = tab_div.nextSibling.cloneNode (true);
           label_none.setAttribute ("id", "label_none");
@@ -92,7 +93,7 @@ window.addEventListener ('load', function () {
           }, true);
         }
       }
-      window.setTimeout (gmailUnlabelled, 500);
+      window.setTimeout (gmailUnlabelled, 1000);
       gmail.registerViewChangeCallback (gmailUnlabelled);
     });
   }
