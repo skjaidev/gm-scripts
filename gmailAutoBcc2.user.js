@@ -39,7 +39,6 @@ if (unsafeWindow.gmonkey) {
         var i = 0;
         for (; i < 9 && j != null; i++) {
           if (j.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
-          alert ('found');
             button_div = j;
             break;
           }
