@@ -30,7 +30,7 @@ if (unsafeWindow.gmonkey) {
     function gBccInit () {
       var root = gmail.getNavPaneElement().ownerDocument;
       root.addEventListener ('click', function(event) {
-        var SEND_BUTTON1_DIV_CLASS = "dW D";
+        var SEND_BUTTON1_DIV_CLASS = "dW";
         var TOP_SEND_DIV_CLASS = "eh";
         var BOT_SEND_DIV_CLASS = "CoUvaf";
         var click = 0;
