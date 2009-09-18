@@ -14,7 +14,8 @@
 // @description   This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/*
 // ==/UserScript==
-var LDC = "pO";
+var LDC = ":r0"; 
+var MDC = ":r2";
 var SIC = "ZRiJh mFwySd";
 var SID = ":ra";
 window.addEventListener ('load', function () {
@@ -23,26 +24,34 @@ window.addEventListener ('load', function () {
       function gmailUnlabelled () {
         var root = gmail.getNavPaneElement ().ownerDocument;
         if (!root.getElementById ("label_none")) {
-          var expr = ".//div[contains (concat (' ', @class, ' '), ' " + LDC 
-              + " ')]";
-          var tab_div = root.evaluate (expr, root, null, 
-              XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext ();
-          if (null == tab_div) return;
-          tab_div.setAttribute ("id", "lb_tbl_div");
-          var label_none = tab_div.nextSibling.cloneNode (true);
-          label_none.setAttribute ("id", "label_none");
-          label_none.innerHTML = "Unlabelled";
-          label_none.addEventListener ("click", function (event) {
-            event.cancelBubble = true;
-            var tab_div = this.ownerDocument.getElementById ("lb_tbl_div");
-            var tr = tab_div.firstChild.firstChild.firstChild;
+          var tdivp = root.getElementById (MDC);
+          if (null == tdivp) return;
+	  var tbody = tdivp.firstChild.nextSibling.nextSibling.firstChild.firstChild;
+          var label_none = tbody.lastChild.cloneNode (true);
+	  var lna = label_none.lastChild.firstChild.firstChild.firstChild;
+          lna.setAttribute ("id", "label_none");
+          lna.innerHTML = "<b>Unlabelled</b>";
+	  lna.href = "";
+	  lna.setAttribute ("title", "Find Unlabelled Messages");
+          lna.addEventListener ("click", function (event) {
+            event.stopPropagation ();
+            event.preventDefault ();
+            var tab_div = this.ownerDocument.getElementById (LDC);
+            var tr = tab_div.firstChild.nextSibling.nextSibling.firstChild.firstChild.firstChild;
             var QS = "";
             var l = "";
             while (tr) {
-              l = tr.lastChild.firstChild.getAttribute ('name');
-              QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-');
+              l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
+              QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
               tr = tr.nextSibling;
             }
+	    tab_div = this.ownerDocument.getElementById (MDC).lastChild;
+	    tr = tab_div.firstChild.firstChild.firstChild;
+	    while (tr) {
+	      l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
+              QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
+              tr = tr.nextSibling;
+	    }
             var srch_ip = this.ownerDocument.getElementById (SID);
             srch_ip.value = QS;
             srch_ip.focus ();
@@ -51,20 +60,27 @@ window.addEventListener ('load', function () {
                 false, false, false, false, 0x0D, 0);
             srch_ip.dispatchEvent (evt);
             }, true);
-          tab_div.parentNode.insertBefore (label_none, tab_div.nextSibling);
+          tbody.insertBefore (label_none, tbody.lastChild.nextSibling);
           var srch_ip = root.getElementById (SID);
           srch_ip.addEventListener ("keypress", function (event) {
             if (event.keyCode == 0x0D && event.charCode == 0 && 
                 "-label" == this.value) { 
-              var tab_div = this.ownerDocument.getElementById ("lb_tbl_div");
-              var tr = tab_div.firstChild.firstChild.firstChild;
+              var tab_div = this.ownerDocument.getElementById (LDC);
+              var tr = tab_div.firstChild.nextSibling.nextSibling.firstChild.firstChild.firstChild;
               var QS = "";
               var l = "";
               while (tr) {
-                l = tr.lastChild.firstChild.getAttribute ('name');
-                QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-');
+                l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
+                QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
                 tr = tr.nextSibling;
               }
+	      tab_div = this.ownerDocument.getElementById (MDC).lastChild;
+	      tr = tab_div.firstChild.firstChild.firstChild;
+	      while (tr) {
+	        l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
+                QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
+                tr = tr.nextSibling;
+	      }
               this.value = QS;
               this.focus ();
               var evt = this.ownerDocument.createEvent ("KeyboardEvent");
@@ -75,15 +91,22 @@ window.addEventListener ('load', function () {
           }, true);
           srch_ip.addEventListener ("change", function (event) {
             if ("-label" == this.value) { 
-              var tab_div = this.ownerDocument.getElementById ("lb_tbl_div");
-              var tr = tab_div.firstChild.firstChild.firstChild;
+              var tab_div = this.ownerDocument.getElementById (LDC);
+              var tr = tab_div.firstChild.nextSibling.nextSibling.firstChild.firstChild.firstChild;
               var QS = "";
               var l = "";
               while (tr) {
-                l = tr.lastChild.firstChild.getAttribute ('name');
-                QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-');
+                l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
+                QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
                 tr = tr.nextSibling;
               }
+	      tab_div = this.ownerDocument.getElementById (MDC).lastChild;
+	      tr = tab_div.firstChild.firstChild.firstChild;
+	      while (tr) {
+	        l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
+                QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
+                tr = tr.nextSibling;
+	      }
               this.value = QS;
               var evt = this.ownerDocument.createEvent ("KeyboardEvent");
               evt.initKeyEvent ("keypress", true, false, null,
