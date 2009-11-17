@@ -22,7 +22,7 @@ window.addEventListener ('load', function () {
   if (unsafeWindow.gmonkey) {
     unsafeWindow.gmonkey.load ("1.0", function (gmail) {
       function gmailUnlabelled () {
-        var root = gmail.getNavPaneElement ().ownerDocument;
+        var root = gmail.getActiveViewElement ().ownerDocument;
         if (!root.getElementById ("label_none")) {
           var tdivp = root.getElementById (MDC);
           if (null == tdivp) return;
