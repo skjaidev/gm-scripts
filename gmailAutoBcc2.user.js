@@ -28,7 +28,7 @@ window.addEventListener('load', function() {
 if (unsafeWindow.gmonkey) {
   unsafeWindow.gmonkey.load("1.0", function(gmail) {
     function gBccInit () {
-      var root = gmail.getNavPaneElement().ownerDocument;
+      var root = gmail.getActiveViewElement().ownerDocument;
       root.addEventListener ('click', function(event) {
         var SEND_BUTTON1_DIV_CLASS = "dW";
         var TOP_SEND_DIV_CLASS = "eh";
@@ -37,6 +37,17 @@ if (unsafeWindow.gmonkey) {
         var button_div = "";
         var j = event.target;
         var i = 0;
+        var enabled = GM_getValue('gBccEnabled');
+        if (enabled == false) {
+          return;
+        }
+        else if (enabled != true) {
+          /* We're probably running for the first time */
+          GM_setValue('gBccEnabled', true);
+          GM_setValue('gBccPopup', false); // FALSE by default
+          GM_setValue('gBccMapFromAddress', false); // FALSE by default
+          enabled = true;
+        }
         for (; i < 9 && j != null; i++) {
           if (j.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
             button_div = j;
@@ -60,17 +71,6 @@ if (unsafeWindow.gmonkey) {
           click = 2;
         else
           return; 
-        var enabled = GM_getValue('gBccEnabled');
-        if (enabled == false) {
-          return;
-        }
-        else if (enabled != true) {
-          /* We're probably running for the first time */
-          GM_setValue('gBccEnabled', true);
-          GM_setValue('gBccPopup', false); // FALSE by default
-          GM_setValue('gBccMapFromAddress', false); // FALSE by default
-          enabled = true;
-        }
         var form_div = "";
         /* Now locate cc/bcc field */
         var button_parent = button_div.parentNode.parentNode;
@@ -141,6 +141,13 @@ if (unsafeWindow.gmonkey) {
         }
         /* Don't repeat */
         dst_field.setAttribute("gid", "gBccDone");
+	if (popup == true) {
+	  var e = document.createEvent ("MouseEvents");
+	  e.initMouseEvent ("click", true, true, window, 1, event.screenX, 
+	      event.screenY, event.clientX, event.clientY, false, false, 
+	      false, false, 0, null);
+	  dst_field.dispatchEvent(e);
+	}
       }, true);
     } /* gBccInit */
     window.setTimeout (gBccInit, 500);
