@@ -24,19 +24,83 @@
 // gBccMapFromAddress = true / false : Use different addresses for different
 //                                     identities or different gmail accounts
 
+var TOCLS = "dK nr";
+var REBTN = "J-K-I J-J5-Ji J-K-I-Js-KK GZ ipG21e";
+function addBcc(tgt) {
+  var tg_cl = tgt.getAttribute ("class");
+  var form;
+  if (tg_cl == TOCLS) {
+    form = tgt.form;
+  }
+  else {
+    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.firstChild.nextSibling.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
+  }
+  var header = GM_getValue ('gBccHeader');
+  if (!header || !(header == "cc" || header == "bcc")) {
+    header = "bcc";
+    GM_setValue ('gBccHeader', "bcc");
+  }
+  var dst_field;
+  if (header == "cc")
+    dst_field = form.elements.namedItem('cc');
+  else 
+    dst_field = form.elements.namedItem('bcc');
+  if (dst_field.getAttribute ("gid") == "gBccDone")
+      return;
+  /* Get the address to cc/bcc to */
+  var mapFrom = GM_getValue ('gBccMapFromAddress');
+  if (mapFrom == true) {
+    var from = form.elements.namedItem('from').value;
+    var email = GM_getValue ('gBccMail_' + from);
+    if (email == "disabled")
+      return;
+    if (!email) {
+      email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
+      if (email == false) {
+        GM_setValue ('gBccMail_' + from, "disabled");
+        return;
+      }
+      GM_setValue ('gBccMail_' + from, email);
+    }
+  }
+  else {
+    var email = GM_getValue('gBccMail');
+    if (!email) {
+      email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
+      if (email == false) 
+        return;
+      GM_setValue('gBccMail', email);
+    }
+    if (mapFrom != false) 
+      GM_setValue('gBccMapFromAddress', false); // FALSE by default
+  }
+  /* Should we confirm? */
+  var popup = GM_getValue ('gBccPopup');
+  if (popup == true) {
+    if (confirm("Do you want to add BCC to " + email + "?") == false) {
+      dst_field.setAttribute("gid", "gBccDone");
+      return;
+    }
+  }
+  else if (popup != false) {
+    GM_setValue ('gBccPopup', false); // FALSE by default
+  }
+  if (dst_field.value) {
+    dst_field.value = dst_field.value+", " +email;
+  }
+  else {
+    dst_field.value = email;
+  }
+  /* Don't repeat */
+  dst_field.setAttribute("gid", "gBccDone");
+}
+
 window.addEventListener('load', function() {
 if (unsafeWindow.gmonkey) {
   unsafeWindow.gmonkey.load("1.0", function(gmail) {
     function gBccInit () {
       var root = gmail.getActiveViewElement().ownerDocument;
-      root.addEventListener ('click', function(event) {
-        var SEND_BUTTON1_DIV_CLASS = "dW";
-        var TOP_SEND_DIV_CLASS = "eh";
-        var BOT_SEND_DIV_CLASS = "CoUvaf";
-        var click = 0;
-        var button_div = "";
-        var j = event.target;
-        var i = 0;
+      root.addEventListener ("blur", function(event) {
         var enabled = GM_getValue('gBccEnabled');
         if (enabled == false) {
           return;
@@ -48,105 +112,15 @@ if (unsafeWindow.gmonkey) {
           GM_setValue('gBccMapFromAddress', false); // FALSE by default
           enabled = true;
         }
-        for (; i < 9 && j != null; i++) {
-          if (j.getAttribute ("class") == SEND_BUTTON1_DIV_CLASS) {
-            button_div = j;
-            break;
-          }
-          else {
-            j = j.parentNode;
-          }
-        }
-        if (!button_div)
-          return;
-        if (button_div.getAttribute ("class") != SEND_BUTTON1_DIV_CLASS) 
-          return;
-        if (button_div.parentNode.getAttribute ("class") 
-            == TOP_SEND_DIV_CLASS) 
-          /* Top send button clicked */
-          click = 1;
-        else if (button_div.parentNode.getAttribute ("class") 
-            == BOT_SEND_DIV_CLASS)
-          /* Lower send button clicked */
-          click = 2;
-        else
-          return; 
-        var form_div = "";
-        /* Now locate cc/bcc field */
-        var button_parent = button_div.parentNode.parentNode;
-        switch (click) {
-          case 1:
-            form_div = button_parent.nextSibling;
-            break;
-          case 2:
-            form_div = button_parent.previousSibling;
-            break;
-        }
-        /* Find out if we want to use cc/bcc */
-        var header = GM_getValue ('gBccHeader');
-        if (!header || !(header == "cc" || header == "bcc")) {
-          header = "bcc";
-          GM_setValue ('gBccHeader', "bcc");
-        }
-        var form = form_div.firstChild;
-        if (header == "cc")
-          dst_field = form.elements.namedItem('cc');
-        else 
-          dst_field = form.elements.namedItem('bcc');
-        if (dst_field.getAttribute ("gid") == "gBccDone")
-            return;
-        /* Get the address to cc/bcc to */
-        var mapFrom = GM_getValue ('gBccMapFromAddress');
-        if (mapFrom == true) {
-          var from = form.elements.namedItem('from').value;
-          var email = GM_getValue ('gBccMail_' + from);
-          if (email == "disabled")
-            return;
-          if (!email) {
-            email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
-            if (email == false) {
-              GM_setValue ('gBccMail_' + from, "disabled");
-              return;
-            }
-            GM_setValue ('gBccMail_' + from, email);
-          }
-        }
-        else {
-          var email = GM_getValue('gBccMail');
-          if (!email) {
-            email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
-            if (email == false) 
-              return;
-            GM_setValue('gBccMail', email);
-          }
-          if (mapFrom != false) 
-            GM_setValue('gBccMapFromAddress', false); // FALSE by default
-        }
-        /* Should we confirm? */
-        var popup = GM_getValue ('gBccPopup');
-        if (popup == true) {
-          if (confirm("Do you want to add BCC to " + email + "?") == false) {
-            dst_field.setAttribute("gid", "gBccDone");
-            return;
-          }
-        }
-        else if (popup != false) {
-          GM_setValue ('gBccPopup', false); // FALSE by default
-        }
-        if (dst_field.value) {
-          dst_field.value = dst_field.value+", " +email;
-        }
-        else {
-          dst_field.value = email;
-        }
-        /* Don't repeat */
-        dst_field.setAttribute("gid", "gBccDone");
-	if (popup == true) {
-	  var e = document.createEvent ("MouseEvents");
-	  e.initMouseEvent ("click", true, true, window, 1, event.screenX, 
-	      event.screenY, event.clientX, event.clientY, false, false, 
-	      false, false, 0, null);
-	  dst_field.dispatchEvent(e);
+        var tg_cl = event.target.getAttribute ("class");
+	if (tg_cl == TOCLS) {
+	  addBcc (event.target);
+	}
+	else if (tg_cl == REBTN) {
+	  window.setTimeout (addBcc, 500, event.target);
+	}
+	else {
+	  return;
 	}
       }, true);
     } /* gBccInit */
@@ -155,3 +129,4 @@ if (unsafeWindow.gmonkey) {
   });
 }
 }, true);
+
