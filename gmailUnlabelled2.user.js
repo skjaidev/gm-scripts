@@ -14,10 +14,10 @@
 // @description   This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/*
 // ==/UserScript==
-var LDC = ":r0"; 
-var MDC = ":r2";
+var LDC = ":r8"; 
+var MDC = ":ra";
 var SIC = "ZRiJh mFwySd";
-var SID = ":ra";
+var SID = ":re";
 window.addEventListener ('load', function () {
   if (unsafeWindow.gmonkey) {
     unsafeWindow.gmonkey.load ("1.0", function (gmail) {
