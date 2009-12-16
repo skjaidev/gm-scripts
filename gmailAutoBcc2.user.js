@@ -60,7 +60,7 @@ function addBcc (tgt) {
   /* Get the address to cc/bcc to */
   var mapFrom = GM_getValue ('gBccMapFromAddress');
   var remove = false;
-  if (mapFrom == true) {
+  if (mapFrom == true && form.elements.namedItem ('from')) {
     var from = form.elements.namedItem('from').value;
     var email = GM_getValue ('gBccMail_' + from);
     if (dst_field.getAttribute ("gid") == "gBccDone") {
