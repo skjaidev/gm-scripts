@@ -23,12 +23,35 @@
 // gBccHeader = "bcc" : Header to add. By default BCC. Can be set to "cc".
 // gBccMapFromAddress = true / false : Use different addresses for different
 //                                     identities or different gmail accounts
+// gBccLogging = 0-3 : Set log level (0-Disable, 1-Errors, 2-Warnings, 3-Verbose)
+var gmail = null;
+var logging = 0;
+var L_ERR = 1;
+var L_WAR = 2;
+var L_VER = 3;
 
 var TOCLS = "dK nr";
 var REBTN = "J-K-I J-J5-Ji J-K-I-Js-KK GZ L3";
+var RABTN = "b7 J-M";
+
+function gBccLog (level, logmsg) {
+  if (logging == 0) {
+    logging = GM_getValue ('gBccLogging');
+    if (logging == undefined) {
+      logging = 1;
+      GM_setValue ('gBccLogging', logging);
+    }
+  }
+  if (logging >= level) {
+    var d = new Date();
+    GM_log ("<" + level + ">[" + d.toLocaleTimeString() + "] " + logmsg);
+  }
+}
+
 function addBcc (tgt) {
   var enabled = GM_getValue('gBccEnabled');
   if (enabled == false) {
+    gBccLog (L_VER, "Script disabled");
     return;
   }
   else if (enabled != true) {
@@ -38,36 +61,61 @@ function addBcc (tgt) {
     GM_setValue('gBccMapFromAddress', false); // FALSE by default
     enabled = true;
   }
-//  var tg_cl = tgt.getAttribute ("class");
   var form;
-// if (tg_cl == TOCLS) {
-  if (tgt.form) {
-    form = tgt.form;
+  var forms = tgt.ownerDocument.getElementsByTagName ('form');
+  //alert (forms.length);
+  for (var i = 0; i < forms.length; i++) {
+    if (forms[i].elements.namedItem ('bcc')) {
+      form = forms[i];
+      break;
+    }
   }
-  else {
-    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.firstChild.nextSibling.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
+  //if (tgt.form) {
+  //  form = tgt.form;
+  //}
+  //else {
+  //  if (tgt.getAttribute ('class') == REBTN) {
+  //    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.firstChild.nextSibling.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
+  //  }
+  //  else if (tgt.getAttribute ('class') == RABTN) {
+  //    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.lastChild.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
+  //  }
+  //}
+  if (!form) {
+    gBccLog (L_ERR, "No form");
+    return;
   }
   var header = GM_getValue ('gBccHeader');
   if (!header || !(header == "cc" || header == "bcc")) {
     header = "bcc";
     GM_setValue ('gBccHeader', "bcc");
   }
+  gBccLog (L_VER, "Header = " + header);
   var dst_field;
   if (header == "cc")
     dst_field = form.elements.namedItem('cc');
   else 
     dst_field = form.elements.namedItem('bcc');
+  if (!dst_field) {
+    gBccLog (L_ERR, "No dst");
+    return;
+  }
+  var gStatus = dst_field.getAttribute ('gid');
+  dst_field.setAttribute ('gid', "gBccDone");
   /* Get the address to cc/bcc to */
   var mapFrom = GM_getValue ('gBccMapFromAddress');
   var remove = false;
   if (mapFrom == true && form.elements.namedItem ('from')) {
+    gBccLog (L_VER, "Mapping identities");
     var from = form.elements.namedItem('from').value;
     var email = GM_getValue ('gBccMail_' + from);
-    if (dst_field.getAttribute ("gid") == "gBccDone") {
+    if (gStatus == "gBccDone") {
       if (tgt.nodeName == 'SELECT') {
         var lue = GM_getValue ('gBccLU');
-        if (lue == email)
+        if (lue == email) {
+          gBccLog (L_VER, "Already copied");
           return;
+        }
         var lu = new RegExp (lue + "(, )?");
         remove = true;
       }
@@ -75,27 +123,35 @@ function addBcc (tgt) {
         return;
       }
     }
-    if (email == "disabled")
+    if (email == "disabled") {
+      gBccLog (L_VER, "Disabled for sender " + from);
       return;
+    }
     if (!email) {
       email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
       if (email == false) {
         GM_setValue ('gBccMail_' + from, "disabled");
+        gBccLog (L_VER, "Disabling for sender " + from);
         return;
       }
       GM_setValue ('gBccMail_' + from, email);
+      gBccLog (L_VER, "Enabling for sender " + from + "; Copying " + email);
     }
   }
   else {
-    if (dst_field.getAttribute ("gid") == "gBccDone")
+    gBccLog (L_VER, "Not mapping");
+    if (gStatus == "gBccDone") {
       /* Don't insert again! */
+      gBccLog (L_VER, "Already copied");
       return;
+    }
     var email = GM_getValue('gBccMail');
     if (!email) {
       email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
       if (email == false) 
         return;
       GM_setValue('gBccMail', email);
+      gBccLog (L_VER, "Enabling default, copying " + email);
     }
     if (mapFrom != false) 
       GM_setValue('gBccMapFromAddress', false); // FALSE by default
@@ -104,7 +160,7 @@ function addBcc (tgt) {
   var popup = GM_getValue ('gBccPopup');
   if (popup == true) {
     if (confirm("Do you want to add BCC to " + email + "?") == false) {
-      dst_field.setAttribute("gid", "gBccDone");
+      gBccLog (L_VER, "Not copying");
       return;
     }
   }
@@ -119,6 +175,7 @@ function addBcc (tgt) {
         var new_bcc_str = bcc_str.replace (lu, "");
         var end = new RegExp ("(, )?$");
         dst_field.value = new_bcc_str.replace (end, "");
+        gBccLog (L_VER, "Replaced " + lue + " with " + email);
       }
     }
   }
@@ -128,39 +185,64 @@ function addBcc (tgt) {
   else {
     dst_field.value = email;
   }
+  gBccLog (L_VER, "Copied " + email);
   /* Don't repeat */
   GM_setValue ('gBccLU', email);
-  dst_field.setAttribute("gid", "gBccDone");
 }
 
-window.addEventListener('load', function() {
-if (unsafeWindow.gmonkey) {
-  unsafeWindow.gmonkey.load("1.0", function(gmail) {
-    function gBccInit () {
-      var root = gmail.getActiveViewElement().ownerDocument;
-      root.addEventListener ("blur", function(event) {
-        if (typeof (event.target.getAttribute) == 'function') {
-          var tg_cl = event.target.getAttribute ("class");
-          if (tg_cl == TOCLS) {
-            addBcc (event.target);
-          }
-          else if (tg_cl == REBTN) {
-            window.setTimeout (addBcc, 500, event.target);
-          }
-          else {
-            return;
-          }
-        }
-      }, true);
-      root.addEventListener ("change", function (event) {
-        if (event.target.getAttribute ('name') == 'from') {
+function gBccInit () 
+{
+  try {
+    gBccLog (L_VER, "Initializing Script");
+    var root = gmail.getFooterElement().ownerDocument;
+    root.addEventListener ("blur", function(event) {
+      if (typeof (event.target.getAttribute) == 'function') {
+        var tg_cl = event.target.getAttribute ("class");
+        if (tg_cl == TOCLS) {
+          gBccLog (L_VER, "Trigger = field");
           addBcc (event.target);
         }
-      }, true);
-    } /* gBccInit */
-    window.setTimeout (gBccInit, 500);
-    gmail.registerViewChangeCallback (gBccInit);
-  });
-}
-}, true);
+        else if (tg_cl == REBTN || tg_cl == RABTN) {
+          gBccLog (L_VER, "Trigger = timeout");
+          window.setTimeout (addBcc, 500, event.target);
+        }
+        else {
+//          gBccLog (L_VER, tg_cl);
+          return;
+        }
+      }
+    }, true);
+    root.addEventListener ("change", function (event) {
+      if (event.target.getAttribute ('name') == 'from') {
+        gBccLog (L_VER, "Trigger = sender change");
+        addBcc (event.target);
+      }
+    }, true);
+    gBccLog (L_VER, "Initialized Script");
+  }
+  catch (ex) {
+    GM_log ("gmailAutoBcc: Exception '"+ ex.message +"'. Retry in 250ms");
+    window.setTimeout (gBccInit, 250);
+  }
+} /* gBccInit */
 
+function gBccStartInit (g) 
+{
+  gmail = g;
+  window.setTimeout (gBccInit, 250);
+}
+
+function scriptStart () 
+{
+  window.addEventListener('load', function() {
+    if (unsafeWindow.gmonkey) {
+      unsafeWindow.gmonkey.load ('1.0', gBccStartInit);
+    }
+    else {
+      GM_log ("gmailAutoBcc: Waiting for gmail API, retrying in 250ms.");
+      window.setTimeout (scriptStart, 250);
+    }
+  }, true);
+}
+
+window.setTimeout (scriptStart, 500);
