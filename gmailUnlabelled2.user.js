@@ -15,16 +15,16 @@
 // @include     http*://mail.google.com/*
 // ==/UserScript==
 var gmail = null;
-var LDC = ":r8"; 
-var MDC = ":ra";
+var HDL = ":r6"; 
+var SBR = ":r8";
 var SIC = "ZRiJh mFwySd";
-var SID = ":rd";
+var SID = ":rc";
 function gmailUnlabelled () {
   var root = gmail.getFooterElement ().ownerDocument;
   if (!root.getElementById ("label_none")) {
-    var tdivp = root.getElementById (MDC);
-    if (null == tdivp) return;
-    var tbody = tdivp.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild.firstChild;
+    var sbr = root.getElementById (SBR);
+    if (null == sbr) return;
+    var tbody = sbr.firstChild.nextSibling.nextSibling.firstChild.firstChild;
     var label_none = tbody.lastChild.cloneNode (true);
     var lna = label_none.lastChild.firstChild.firstChild.firstChild;
     lna.setAttribute ("id", "label_none");
@@ -34,8 +34,8 @@ function gmailUnlabelled () {
     lna.addEventListener ("click", function (event) {
       event.stopPropagation ();
       event.preventDefault ();
-      var tab_div = this.ownerDocument.getElementById (LDC);
-      var tr = tab_div.firstChild.firstChild.firstChild.nextSibling.firstChild.nextSibling.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild.firstChild.firstChild;
+      var sbr = this.ownerDocument.getElementById (SBR);
+      var tr = sbr.lastChild.firstChild.firstChild.firstChild;
       var QS = "";
       var l = "";
       while (tr) {
@@ -43,7 +43,7 @@ function gmailUnlabelled () {
         QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
         tr = tr.nextSibling;
       }
-      tab_div = this.ownerDocument.getElementById (MDC).firstChild.firstChild.lastChild;
+      var tab_div = this.ownerDocument.getElementById (HDL).firstChild.nextSibling.nextSibling;
       tr = tab_div.firstChild.firstChild.firstChild;
       while (tr) {
         l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
@@ -63,8 +63,8 @@ function gmailUnlabelled () {
     srch_ip.addEventListener ("keypress", function (event) {
       if (event.keyCode == 0x0D && event.charCode == 0 && 
           "-label" == this.value) { 
-        var tab_div = this.ownerDocument.getElementById (LDC);
-        var tr = tab_div.firstChild.firstChild.firstChild.nextSibling.firstChild.nextSibling.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild.firstChild.firstChild;
+        var sbr = this.ownerDocument.getElementById (SBR);
+        var tr = sbr.lastChild.firstChild.firstChild.firstChild;
         var QS = "";
         var l = "";
         while (tr) {
@@ -72,7 +72,7 @@ function gmailUnlabelled () {
           QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
           tr = tr.nextSibling;
         }
-        tab_div = this.ownerDocument.getElementById (MDC).firstChild.firstChild.lastChild;
+        var tab_div = this.ownerDocument.getElementById (HDL).firstChild.nextSibling.nextSibling;
         tr = tab_div.firstChild.firstChild.firstChild;
         while (tr) {
           l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
@@ -89,8 +89,8 @@ function gmailUnlabelled () {
     }, true);
     srch_ip.addEventListener ("change", function (event) {
       if ("-label" == this.value) { 
-        var tab_div = this.ownerDocument.getElementById (LDC);
-        var tr = tab_div.firstChild.firstChild.firstChild.nextSibling.firstChild.nextSibling.firstChild.firstChild.firstChild.nextSibling.nextSibling.firstChild.firstChild.firstChild;
+        var sbr = this.ownerDocument.getElementById (SBR);
+        var tr = sbr.lastChild.firstChild.firstChild.firstChild;
         var QS = "";
         var l = "";
         while (tr) {
@@ -98,7 +98,7 @@ function gmailUnlabelled () {
           QS = QS + ' -label:' + l.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
           tr = tr.nextSibling;
         }
-        tab_div = this.ownerDocument.getElementById (MDC).firstChild.firstChild.lastChild;
+        var tab_div = this.ownerDocument.getElementById (HDL).firstChild.nextSibling.nextSibling;
         tr = tab_div.firstChild.firstChild.firstChild;
         while (tr) {
           l = tr.lastChild.firstChild.firstChild.firstChild.getAttribute ('title');
