@@ -16,7 +16,6 @@
 // ==/UserScript==
 // Control parameters -- tweak in about:config
 // logging = 0-3 : Set log level (0-Disable, 1-Errors, 2-Warnings, 3-Verbose)
-var gmail = null;
 var logging = 0;
 var L_ERR = 1;
 var L_WAR = 2;
@@ -51,7 +50,7 @@ function doLog (level, logmsg) {
 }
 function gmailUnlabelled () {
   try {
-    var root = gmail.getFooterElement ().ownerDocument;
+    var root = document;
     if (!root.getElementById ("label_none")) {
       var expr = ".//div[contains (concat (' ', @class, ' '), ' " + MMC 
           + " ')]";
@@ -151,23 +150,5 @@ function gmailUnlabelled () {
     window.setTimeout (gmailUnlabelled, 250);
   }
 }
-function gmailUnlabelledInit (g) 
-{
-  gmail = g;
-  window.setTimeout (gmailUnlabelled, 750);
-  gmail.registerViewChangeCallback (gmailUnlabelled);
-}
-function scriptStart () 
-{
-  window.addEventListener ('load', function () {
-    if (unsafeWindow.gmonkey) {
-      unsafeWindow.gmonkey.load ("1.0", gmailUnlabelledInit);
-    }
-    else {
-      GM_log ("gmailUnlabelled: Waiting for gmail API, retrying in 250ms.");
-      window.setTimeout (scriptStart, 250);
-    }
-  }, true);
-}
-window.setTimeout (scriptStart, 500);
+window.setTimeout (gmailUnlabelled, 500);
 
