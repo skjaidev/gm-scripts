@@ -193,8 +193,7 @@ function addBcc (tgt) {
 function gBccInit () 
 {
   try {
-    gBccLog (L_VER, "Initializing Script");
-    var root = gmail.getFooterElement().ownerDocument;
+    var root = document;
     root.addEventListener ("blur", function(event) {
       if (typeof (event.target.getAttribute) == 'function') {
         var tg_cl = event.target.getAttribute ("class");
@@ -207,7 +206,6 @@ function gBccInit ()
           window.setTimeout (addBcc, 500, event.target);
         }
         else {
-//          gBccLog (L_VER, tg_cl);
           return;
         }
       }
@@ -226,23 +224,4 @@ function gBccInit ()
   }
 } /* gBccInit */
 
-function gBccStartInit (g) 
-{
-  gmail = g;
-  window.setTimeout (gBccInit, 750);
-}
-
-function scriptStart () 
-{
-  window.addEventListener('load', function() {
-    if (unsafeWindow.gmonkey) {
-      unsafeWindow.gmonkey.load ('1.0', gBccStartInit);
-    }
-    else {
-      GM_log ("gmailAutoBcc: Waiting for gmail API, retrying in 250ms.");
-      window.setTimeout (scriptStart, 250);
-    }
-  }, true);
-}
-
-window.setTimeout (scriptStart, 500);
+window.setTimeout (gBccInit, 750);
