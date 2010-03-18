@@ -3,7 +3,7 @@
  * 
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
  * 
- * Copyright (c) 2005-2008, Jaidev K Sridhar
+ * Copyright (c) 2005-2010, Jaidev K Sridhar
  * Released under the GPL license
  * http://www.gnu.org/copyleft/gpl.html
  */
@@ -221,7 +221,7 @@ function gBccInit ()
     gBccLog (L_VER, "Initialized Script");
   }
   catch (ex) {
-    GM_log ("gmailAutoBcc: Exception '"+ ex.message +"'. Retry in 250ms");
+    GM_log ("gmailAutoBcc: Exception '"+ ex.message +"'. Retry in 250ms.");
     window.setTimeout (gBccInit, 250);
   }
 } /* gBccInit */
@@ -229,7 +229,7 @@ function gBccInit ()
 function gBccStartInit (g) 
 {
   gmail = g;
-  window.setTimeout (gBccInit, 250);
+  window.setTimeout (gBccInit, 750);
 }
 
 function scriptStart () 
