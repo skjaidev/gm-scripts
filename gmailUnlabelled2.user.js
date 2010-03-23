@@ -146,8 +146,7 @@ function gmailUnlabelled () {
     }
   }
   catch (ex) {
-    GM_log ("gmailUnlabelled: Exception '" + ex.message + "'. Retry in 250ms.");
-    window.setTimeout (gmailUnlabelled, 250);
+    GM_log ("gmailUnlabelled: Exception '" + ex.message);
   }
 }
 window.setTimeout (gmailUnlabelled, 500);

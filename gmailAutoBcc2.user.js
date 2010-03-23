@@ -219,7 +219,7 @@ function gBccInit ()
     gBccLog (L_VER, "Initialized Script");
   }
   catch (ex) {
-    GM_log ("gmailAutoBcc: Exception '"+ ex.message +"'. Retry in 250ms.");
+    GM_log ("gmailAutoBcc: Exception '"+ ex.message);
     window.setTimeout (gBccInit, 250);
   }
 } /* gBccInit */
