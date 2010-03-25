@@ -197,7 +197,7 @@ function gBccInit ()
     root.addEventListener ("blur", function(event) {
       if (typeof (event.target.getAttribute) == 'function') {
         var tg_cl = event.target.getAttribute ("class");
-        if (tg_cl == TOCLS) {
+        if (tg_cl.match (TOCLS)) {
           gBccLog (L_VER, "Trigger = field");
           addBcc (event.target);
         }
