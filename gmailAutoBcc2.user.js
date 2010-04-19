@@ -29,9 +29,9 @@ var logging = 0;
 var L_ERR = 1;
 var L_WAR = 2;
 var L_VER = 3;
-
+var ga_retries = 0;
 var TOCLS = "dK nr";
-var REBTN = "J-K-I J-J5-Ji J-K-I-Js-KK GZ L3";
+var REBTN = "J-C41vtd-I J-J5-Ji J-C41vtd-I-Js-CpWD9d GZ L3"
 var RABTN = "b7 J-M";
 
 function gBccLog (level, logmsg) {
@@ -63,7 +63,6 @@ function addBcc (tgt) {
   }
   var form;
   var forms = tgt.ownerDocument.getElementsByTagName ('form');
-  //alert (forms.length);
   for (var i = 0; i < forms.length; i++) {
     if (forms[i].elements.namedItem ('bcc')) {
       form = forms[i];
@@ -201,7 +200,7 @@ function gBccInit ()
           gBccLog (L_VER, "Trigger = field");
           addBcc (event.target);
         }
-        else if (tg_cl == REBTN || tg_cl == RABTN) {
+        else if (tg_cl.match (REBTN) || tg_cl.match (RABTN)) {
           gBccLog (L_VER, "Trigger = timeout");
           window.setTimeout (addBcc, 500, event.target);
         }
@@ -220,7 +219,10 @@ function gBccInit ()
   }
   catch (ex) {
     GM_log ("gmailAutoBcc: Exception '"+ ex.message);
-    window.setTimeout (gBccInit, 250);
+    if (ga_retries < 3) {
+      ga_retries ++;
+      window.setTimeout (gBccInit, 250);
+    }
   }
 } /* gBccInit */
 
