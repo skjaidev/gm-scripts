@@ -20,10 +20,10 @@ var logging = 0;
 var L_ERR = 1;
 var L_WAR = 2;
 var L_VER = 3;
-
+var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
-var SID = ":rc";
+var SID = ":rh";
 var exclude = new Array (
   "Inbox",
   "Buzz",
@@ -56,6 +56,14 @@ function gmailUnlabelled () {
           + " ')]";
       var menu_div = root.evaluate (expr, root, null, 
           XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext ();
+      if (!menu_div) {
+        if (gu_retries < 3) {
+          gu_retries ++;
+          doLog (L_WAR, "Triggering retry.");
+          window.setTimeout (gmailUnlabelled, 250);
+        }
+        return;
+      }
       var label_none = menu_div.firstChild.lastChild.cloneNode (true);
       var lna = label_none.firstChild.lastChild.firstChild;
       lna.setAttribute ("id", "label_none");
@@ -118,7 +126,7 @@ function gmailUnlabelled () {
         }
       }, true);
       srch_ip.addEventListener ("change", function (event) {
-        if ("-label" == this.value) { 
+        if ("-label" == this.value || "-label " == this.value) { 
           var lexpr = ".//a[contains (concat (' ', @class, ' '), ' " + LC 
               + " ')]";
           var res = root.evaluate (lexpr, root, null, 
