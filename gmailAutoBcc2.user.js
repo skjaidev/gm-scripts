@@ -31,7 +31,8 @@ var L_WAR = 2;
 var L_VER = 3;
 var ga_retries = 0;
 var TOCLS = "dK nr";
-var REBTN = "J-C41vtd-I J-J5-Ji J-C41vtd-I-Js-CpWD9d GZ L3"
+var TOLISTCLS = "am";
+var REBTN = "J-Zh-I J-J5-Ji J-Zh-I-Js-Zj GZ L3";
 var RABTN = "b7 J-M";
 
 function gBccLog (level, logmsg) {
@@ -147,7 +148,7 @@ function addBcc (tgt) {
     var email = GM_getValue('gBccMail');
     if (!email) {
       email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
-      if (email == false) 
+      if (email == null || email == "" ) 
         return;
       GM_setValue('gBccMail', email);
       gBccLog (L_VER, "Enabling default, copying " + email);
@@ -213,6 +214,15 @@ function gBccInit ()
       if (event.target.getAttribute ('name') == 'from') {
         gBccLog (L_VER, "Trigger = sender change");
         addBcc (event.target);
+      }
+    }, true);
+    root.addEventListener ("click", function (event) {
+      if (typeof (event.target.getAttribute) == 'function') {
+        var tg_cl = event.target.getAttribute ("class");
+        if (tg_cl.match (TOLISTCLS)) {
+          gBccLog (L_VER, "Trigger = abook");
+          addBcc (event.target);
+        }
       }
     }, true);
     gBccLog (L_VER, "Initialized Script");
