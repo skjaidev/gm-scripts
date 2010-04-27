@@ -1,7 +1,8 @@
 /* This greasemonkey script automatically BCCs (or CCs) outgoing email from 
  * a gmail address to a specified email address
- * 
+ *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
+ * Version: v20100427-2
  * 
  * Copyright (c) 2005-2010, Jaidev K Sridhar
  * Released under the GPL license
@@ -60,6 +61,7 @@ function addBcc (tgt) {
     GM_setValue('gBccEnabled', true);
     GM_setValue('gBccPopup', false); // FALSE by default
     GM_setValue('gBccMapFromAddress', false); // FALSE by default
+    GM_setValue ('gBccLogging', 1);
     enabled = true;
   }
   var form;
@@ -199,7 +201,7 @@ function gBccInit ()
         var tg_cl = event.target.getAttribute ("class");
         if (tg_cl.match (TOCLS)) {
           gBccLog (L_VER, "Trigger = field");
-          addBcc (event.target);
+          window.setTimeout (addBcc, 500, event.target);
         }
         else if (tg_cl.match (REBTN) || tg_cl.match (RABTN)) {
           gBccLog (L_VER, "Trigger = timeout");
@@ -215,8 +217,12 @@ function gBccInit ()
         gBccLog (L_VER, "Trigger = sender change");
         addBcc (event.target);
       }
+      if (event.target.getAttribute ('name') == 'to') {
+        gBccLog (L_VER, "Trigger = to");
+        window.setTimeout (addBcc, 500, event.target);
+      }
     }, true);
-    root.addEventListener ("click", function (event) {
+/*    root.addEventListener ("click", function (event) {
       if (typeof (event.target.getAttribute) == 'function') {
         var tg_cl = event.target.getAttribute ("class");
         if (tg_cl.match (TOLISTCLS)) {
@@ -225,6 +231,7 @@ function gBccInit ()
         }
       }
     }, true);
+*/
     gBccLog (L_VER, "Initialized Script");
   }
   catch (ex) {
