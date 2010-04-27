@@ -2,6 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
+ * Version: v20100427-1
  *
  * Copyright (c) 2005-2010, Jaidev K Sridhar
  * Released under the GPL license
