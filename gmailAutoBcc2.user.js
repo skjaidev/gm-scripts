@@ -2,7 +2,7 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20100427-2
+ * Version: v20100429-1
  * 
  * Copyright (c) 2005-2010, Jaidev K Sridhar
  * Released under the GPL license
@@ -33,7 +33,8 @@ var L_VER = 3;
 var ga_retries = 0;
 var TOCLS = "dK nr";
 var TOLISTCLS = "am";
-var REBTN = "J-Zh-I J-J5-Ji J-Zh-I-Js-Zj GZ L3";
+var REBTN1 = "J-Zh-I J-J5-Ji J-Zh-I-Js-Zj GZ L3";
+var REBTN2 = "J-K-I J-J5-Ji J-K-I-Js-Zj GZ L3";
 var RABTN = "b7 J-M";
 
 function gBccLog (level, logmsg) {
@@ -199,11 +200,13 @@ function gBccInit ()
     root.addEventListener ("blur", function(event) {
       if (typeof (event.target.getAttribute) == 'function') {
         var tg_cl = event.target.getAttribute ("class");
+        if (!tg_cl) return;
         if (tg_cl.match (TOCLS)) {
           gBccLog (L_VER, "Trigger = field");
           window.setTimeout (addBcc, 500, event.target);
         }
-        else if (tg_cl.match (REBTN) || tg_cl.match (RABTN)) {
+        else if (tg_cl.match (REBTN1) || tg_cl.match (REBTN2) ||
+            tg_cl.match (RABTN)) {
           gBccLog (L_VER, "Trigger = timeout");
           window.setTimeout (addBcc, 500, event.target);
         }
