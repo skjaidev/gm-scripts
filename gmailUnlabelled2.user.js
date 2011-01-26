@@ -2,7 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20100427-1
+ * Version: v20110126-1
  *
  * Copyright (c) 2005-2010, Jaidev K Sridhar
  * Released under the GPL license
@@ -24,7 +24,7 @@ var L_VER = 3;
 var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
-var SID = ":rh";
+var SID = ":rf";
 var exclude = new Array (
   "Inbox",
   "Buzz",
@@ -62,6 +62,9 @@ function gmailUnlabelled () {
           gu_retries ++;
           doLog (L_WAR, "Triggering retry.");
           window.setTimeout (gmailUnlabelled, 250);
+        }
+        else {
+          doLog (L_ERR, "Failed to initialize - Retry limit exceeded.");
         }
         return;
       }
