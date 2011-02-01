@@ -2,7 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110126-1
+ * Version: v20110131-1
  *
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license
@@ -25,6 +25,8 @@ var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
 var SID = ":rf";
+var SID2 = ":rg";
+var SIDC = "bQ nr";
 var exclude = new Array (
   "Inbox",
   "Buzz",
@@ -93,6 +95,9 @@ function gmailUnlabelled () {
           }
         }
         var srch_ip = this.ownerDocument.getElementById (SID);
+        if (!srch_ip || srch_ip.getAttribute ('class') != SIDC) {
+          srch_ip = root.getElementById (SID2);
+        }
         srch_ip.value = QS;
         srch_ip.focus ();
         var evt = srch_ip.ownerDocument.createEvent ("KeyboardEvent");
@@ -102,6 +107,9 @@ function gmailUnlabelled () {
       }, true);
       menu_div.firstChild.insertBefore (label_none, null);
       var srch_ip = root.getElementById (SID);
+      if (!srch_ip || srch_ip.getAttribute ('class') != SIDC) {
+        srch_ip = root.getElementById (SID2);
+      }
       srch_ip.addEventListener ("keypress", function (event) {
         if (event.keyCode == 0x0D && event.charCode == 0 && 
             "-label" == this.value) { 
