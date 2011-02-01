@@ -4,7 +4,7 @@
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
  * Version: v20100429-1
  * 
- * Copyright (c) 2005-2010, Jaidev K Sridhar
+ * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license
  * http://www.gnu.org/copyleft/gpl.html
  */
@@ -220,7 +220,7 @@ function gBccInit ()
         gBccLog (L_VER, "Trigger = sender change");
         addBcc (event.target);
       }
-      if (event.target.getAttribute ('name') == 'to') {
+      else if (event.target.getAttribute ('name') == 'to') {
         gBccLog (L_VER, "Trigger = to");
         window.setTimeout (addBcc, 500, event.target);
       }
