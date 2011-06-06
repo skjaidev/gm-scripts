@@ -24,9 +24,9 @@ var L_VER = 3;
 var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
-var SID = ":rf";
+var SID = ":re";
 var SID2 = ":rg";
-var SIDC = "bQ nr";
+var SIDC = "GcwpPb-hsoKDf nr";
 var exclude = new Array (
   "Inbox",
   "Buzz",
@@ -62,11 +62,11 @@ function gmailUnlabelled () {
       if (!menu_div) {
         if (gu_retries < 3) {
           gu_retries ++;
-          doLog (L_WAR, "Triggering retry.");
+          doLog (L_VER, "Triggering retry.");
           window.setTimeout (gmailUnlabelled, 250);
         }
         else {
-          doLog (L_ERR, "Failed to initialize - Retry limit exceeded.");
+          doLog (L_VER, "Failed to initialize - Retry limit exceeded.");
         }
         return;
       }
@@ -96,7 +96,7 @@ function gmailUnlabelled () {
         }
         var srch_ip = this.ownerDocument.getElementById (SID);
         if (!srch_ip || srch_ip.getAttribute ('class') != SIDC) {
-          srch_ip = root.getElementById (SID2);
+          doLog (L_ERR, "Can't find SID!");
         }
         srch_ip.value = QS;
         srch_ip.focus ();
