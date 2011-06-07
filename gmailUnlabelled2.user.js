@@ -2,7 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110606-2
+ * Version: v20110606-3
  *
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license
@@ -14,7 +14,7 @@
 // @namespace       http://jaidev.info/home/hacks/gmailUnlabelled
 // @description     This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include         http*://mail.google.com/*
-// @version         v20110606-2
+// @version         v20110606-3
 // less
 // ==/UserScript==
 // Control parameters -- tweak in about:config
@@ -27,18 +27,20 @@ var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
 var SID = ":re";
-var SID2 = ":rg";
+var SID2 = ":rf";
 var SIDC = "GcwpPb-hsoKDf nr";
 var exclude = new Array (
-  "Inbox",
-  "Buzz",
-  "Chats",
-  "Sent Mail",
-  "Drafts",
-  "All Mail",
-  "Starred",
-  "Spam",
-  "Trash"
+  "INBOX",
+  "BUZZ",
+  "CHATS",
+  "SENT MAIL",
+  "DRAFTS",
+  "ALL MAIL",
+  "STARRED",
+  "PRIORITY",
+  "IMPORTANT",
+  "SPAM",
+  "TRASH"
 );
 function doLog (level, logmsg) {
   if (logging == 0) {
@@ -89,10 +91,14 @@ function gmailUnlabelled () {
         var excludes = ":" + exclude.join (":") + ":";
         if (res) {
           while (labs = res.iterateNext ()) {
-            var lname = labs.getAttribute ('title');
+            lname = labs.getAttribute ('title');
+            lname = lname.toUpperCase ();
+            if (lname.indexOf ("(") != -1) {
+                lname = lname.substr (0, lname.indexOf ("(") - 1);
+            }
             if (excludes.indexOf (":" + lname + ":") == -1) {
                 var href = labs.getAttribute ('href');
-                qs = href.substr (href.indexOf ("#", href) + 7);
+                var qs = href.substr (href.indexOf ("#", href) + 7);
                 qs = qs.replace ("\%2F", "-");
                 QS = QS + ' -label:' + 
                         qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
@@ -101,7 +107,7 @@ function gmailUnlabelled () {
         }
         var srch_ip = this.ownerDocument.getElementById (SID);
         if (!srch_ip || srch_ip.getAttribute ('class') != SIDC) {
-          doLog (L_ERR, "Can't find SID!");
+            srch_ip = this.ownerDocument.getElementById (SID2);
         }
         srch_ip.value = QS;
         srch_ip.focus ();
@@ -127,11 +133,18 @@ function gmailUnlabelled () {
           var excludes = ":" + exclude.join (":") + ":";
           if (res) {
             while (labs = res.iterateNext ()) {
-              lname = labs.getAttribute ('title');
-              if (excludes.indexOf (":" + lname + ":") == -1) {
-                QS = QS + ' -label:' + 
-                    lname.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
-              }
+                lname = labs.getAttribute ('title');
+                lname = lname.toUpperCase ();
+                if (lname.indexOf ("(") != -1) {
+                    lname = lname.substr (0, lname.indexOf ("(") - 1);
+                }
+                if (excludes.indexOf (":" + lname + ":") == -1) {
+                    var href = labs.getAttribute ('href');
+                    var qs = href.substr (href.indexOf ("#", href) + 7);
+                    qs = qs.replace ("\%2F", "-");
+                    QS = QS + ' -label:' + 
+                            qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
+                }
             }
           }
           this.value = QS;
@@ -153,11 +166,18 @@ function gmailUnlabelled () {
           var excludes = ":" + exclude.join (":") + ":";
           if (res) {
             while (labs = res.iterateNext ()) {
-              lname = labs.getAttribute ('title');
-              if (excludes.indexOf (":" + lname + ":") == -1) {
-                QS = QS + ' -label:' + 
-                    lname.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
-              }
+                lname = labs.getAttribute ('title');
+                lname = lname.toUpperCase ();
+                if (lname.indexOf ("(") != -1) {
+                    lname = lname.substr (0, lname.indexOf ("(") - 1);
+                }
+                if (excludes.indexOf (":" + lname + ":") == -1) {
+                    var href = labs.getAttribute ('href');
+                    var qs = href.substr (href.indexOf ("#", href) + 7);
+                    qs = qs.replace ("\%2F", "-");
+                    QS = QS + ' -label:' + 
+                            qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
+                }
             }
           }
           this.value = QS;
