@@ -2,7 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110606-1
+ * Version: v20110606-2
  *
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license
@@ -14,7 +14,7 @@
 // @namespace       http://jaidev.info/home/hacks/gmailUnlabelled
 // @description     This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include         http*://mail.google.com/*
-// @version         v20110606-1
+// @version         v20110606-2
 // less
 // ==/UserScript==
 // Control parameters -- tweak in about:config
@@ -89,10 +89,13 @@ function gmailUnlabelled () {
         var excludes = ":" + exclude.join (":") + ":";
         if (res) {
           while (labs = res.iterateNext ()) {
-            lname = labs.getAttribute ('title');
+            var lname = labs.getAttribute ('title');
             if (excludes.indexOf (":" + lname + ":") == -1) {
-              QS = QS + ' -label:' + 
-                  lname.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
+                var href = labs.getAttribute ('href');
+                qs = href.substr (href.indexOf ("#", href) + 7);
+                qs = qs.replace ("\%2F", "-");
+                QS = QS + ' -label:' + 
+                        qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
             }
           }
         }
