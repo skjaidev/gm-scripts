@@ -26,6 +26,9 @@
 // gBccMapFromAddress = true / false : Use different addresses for different
 //                                     identities or different gmail accounts
 // gBccLogging = 0-3 : Set log level (0-Disable, 1-Errors, 2-Warnings, 3-Verbose)
+//
+
+var force_popup = true;        /* For non-firefox users */
 var gmail = null;
 var logging = 0;
 var L_ERR = 1;
@@ -35,7 +38,8 @@ var ga_retries = 0;
 var TOCLS = "dK nr";
 var TOLISTCLS = "am";
 var REBTN1 = "J-Zh-I J-J5-Ji J-Zh-I-Js-Zj GZ L3";
-var REBTN2 = "J-K-I J-J5-Ji J-K-I-Js-Zj GZ L3";
+var REBTN2 = "cKWzSc mD";
+var FWBTN2 = "XymfBd mD";
 var RABTN = "b7 J-M";
 
 function gBccLog (level, logmsg) {
@@ -62,7 +66,7 @@ function addBcc (tgt) {
     /* We're probably running for the first time */
     GM_setValue('gBccEnabled', true);
     GM_setValue('gBccPopup', false); // FALSE by default
-    GM_setValue('gBccMapFromAddress', false); // FALSE by default
+    GM_setValue('gBccMapFromAddress', true); // TRUE by default 
     GM_setValue ('gBccLogging', 1);
     enabled = true;
   }
@@ -158,11 +162,11 @@ function addBcc (tgt) {
       gBccLog (L_VER, "Enabling default, copying " + email);
     }
     if (mapFrom != false) 
-      GM_setValue('gBccMapFromAddress', false); // FALSE by default
+      GM_setValue('gBccMapFromAddress', true); // TRUE by default
   }
   /* Should we confirm? */
   var popup = GM_getValue ('gBccPopup');
-  if (popup == true) {
+  if (popup == true || force_popup == true) {
     if (confirm("Do you want to add BCC to " + email + "?") == false) {
       gBccLog (L_VER, "Not copying");
       return;
@@ -197,6 +201,9 @@ function addBcc (tgt) {
 function gBccInit () 
 {
   try {
+    if (typeof (GM_getValue) != 'function') {
+        GM_log ("gmailAutoBcc: Greasemonkey function not available. If on Google Chrome or Chromium, re-install the script through TamperScript.");
+    }
     var root = document;
     root.addEventListener ("blur", function(event) {
       if (typeof (event.target.getAttribute) == 'function') {
@@ -207,7 +214,7 @@ function gBccInit ()
           window.setTimeout (addBcc, 500, event.target);
         }
         else if (tg_cl.match (REBTN1) || tg_cl.match (REBTN2) ||
-            tg_cl.match (RABTN)) {
+            tg_cl.match (RABTN) || tg_cl.match (FWBTN2)) {
           gBccLog (L_VER, "Trigger = timeout");
           window.setTimeout (addBcc, 500, event.target);
         }
