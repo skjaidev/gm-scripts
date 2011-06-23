@@ -2,7 +2,7 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110606-1
+ * Version: v20110623-1
  * 
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license
@@ -15,7 +15,7 @@
 // @description This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/mail/*
 // @include     http*://mail.google.com/a/*
-// @version     v20110606-1
+// @version     v20110623-1
 // ==/UserScript==
 
 // Control parameters -- tweak in about:config
@@ -131,19 +131,25 @@ function addBcc (tgt) {
         return;
       }
     }
-    if (email == "disabled") {
+    if (email == "disabled" || email == "null" || email == null) {
       gBccLog (L_VER, "Disabled for sender " + from);
-      return;
+      if (remove == false)
+          return;
+      email = "";
     }
-    if (!email) {
+    if (!email && remove == false) {
       email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
       if (email == false) {
         GM_setValue ('gBccMail_' + from, "disabled");
         gBccLog (L_VER, "Disabling for sender " + from);
-        return;
+        if (remove == false)
+            return;
+        email = "";
       }
-      GM_setValue ('gBccMail_' + from, email);
-      gBccLog (L_VER, "Enabling for sender " + from + "; Copying " + email);
+      else {
+        GM_setValue ('gBccMail_' + from, email);
+        gBccLog (L_VER, "Enabling for sender " + from + "; Copying " + email);
+      }
     }
   }
   else {
@@ -166,7 +172,7 @@ function addBcc (tgt) {
   }
   /* Should we confirm? */
   var popup = GM_getValue ('gBccPopup');
-  if (popup == true || force_popup == true) {
+  if ((popup == true || force_popup == true) && email != "" ) {
     if (confirm("Do you want to add BCC to " + email + "?") == false) {
       gBccLog (L_VER, "Not copying");
       return;
@@ -187,6 +193,8 @@ function addBcc (tgt) {
       }
     }
   }
+  if (email == "")
+      return;
   if (dst_field.value) {
     dst_field.value = dst_field.value+", " +email;
   }
