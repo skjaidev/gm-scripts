@@ -2,7 +2,7 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110623-1
+ * Version: v20110623-2
  * 
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license
@@ -15,7 +15,7 @@
 // @description This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/mail/*
 // @include     http*://mail.google.com/a/*
-// @version     v20110623-1
+// @version     v20110623-2
 // ==/UserScript==
 
 // Control parameters -- tweak in about:config
@@ -28,7 +28,7 @@
 // gBccLogging = 0-3 : Set log level (0-Disable, 1-Errors, 2-Warnings, 3-Verbose)
 //
 
-var force_popup = true;        /* For non-firefox users */
+var force_popup = false;        /* For non-firefox users */
 var gmail = null;
 var logging = 0;
 var L_ERR = 1;
