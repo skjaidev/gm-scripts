@@ -2,11 +2,11 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110623-2
+ * Version: v20110629-2
  * 
  * Copyright (c) 2005-2011, Jaidev K Sridhar
- * Released under the GPL license
- * http://www.gnu.org/copyleft/gpl.html
+ * Released under the GPL license version 2.
+ * http://www.gnu.org/licenses/gpl-2.0.html
  */
 
 // ==UserScript==
