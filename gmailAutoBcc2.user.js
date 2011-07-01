@@ -2,7 +2,7 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110629-2
+ * Version: v20110701-2
  * 
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license version 2.
@@ -15,7 +15,7 @@
 // @description This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/mail/*
 // @include     http*://mail.google.com/a/*
-// @version     v20110623-2
+// @version     v20110701-2
 // ==/UserScript==
 
 // Control parameters -- tweak in about:config
@@ -131,7 +131,7 @@ function addBcc (tgt) {
         return;
       }
     }
-    if (email == "disabled" || email == "null" || email == null) {
+    if (email == "disabled") {
       gBccLog (L_VER, "Disabled for sender " + from);
       if (remove == false)
           return;
