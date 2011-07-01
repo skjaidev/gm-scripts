@@ -120,7 +120,10 @@ function addBcc (tgt) {
     if (gStatus == "gBccDone") {
       if (tgt.nodeName == 'SELECT') {
         var lue = GM_getValue ('gBccLU');
-        if (lue == email) {
+        if (lue == null) {
+            remove = false;
+        }
+        else if (lue == email) {
           gBccLog (L_VER, "Already copied");
           return;
         }
@@ -137,7 +140,7 @@ function addBcc (tgt) {
           return;
       email = "";
     }
-    if (!email && remove == false) {
+    if (!email) {
       email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
       if (email == false) {
         GM_setValue ('gBccMail_' + from, "disabled");
