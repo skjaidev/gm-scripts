@@ -41,7 +41,6 @@ var REBTN1 = "J-Zh-I J-J5-Ji J-Zh-I-Js-Zj GZ L3";
 var REBTN2 = "cKWzSc mD";
 var FWBTN2 = "XymfBd mD";
 var RABTN = "b7 J-M";
-
 function gBccLog (level, logmsg) {
   if (logging == 0) {
     logging = GM_getValue ('gBccLogging');
@@ -113,9 +112,14 @@ function addBcc (tgt) {
   /* Get the address to cc/bcc to */
   var mapFrom = GM_getValue ('gBccMapFromAddress');
   var remove = false;
-  if (mapFrom == true && form.elements.namedItem ('from')) {
-    gBccLog (L_VER, "Mapping identities");
+  if (form.elements.namedItem ('from')) {
     var from = form.elements.namedItem('from').value;
+  }
+  else {
+    from = GM_getValue ('gBccCU');
+  }
+  if (mapFrom == true && from) {
+    gBccLog (L_VER, "Mapping identities");
     var email = GM_getValue ('gBccMail_' + from);
     if (gStatus == "gBccDone") {
       if (tgt.nodeName == 'SELECT') {
@@ -208,7 +212,6 @@ function addBcc (tgt) {
   /* Don't repeat */
   GM_setValue ('gBccLU', email);
 }
-
 function gBccInit () 
 {
   try {
@@ -216,6 +219,9 @@ function gBccInit ()
         GM_log ("gmailAutoBcc: Greasemonkey function not available. If on Google Chrome or Chromium, re-install the script through TamperScript.");
     }
     var root = document;
+    if (unsafeWindow.GLOBALS) {
+        GM_setValue ('gBccCU', unsafeWindow.GLOBALS[10]);
+    }
     root.addEventListener ("blur", function(event) {
       if (typeof (event.target.getAttribute) == 'function') {
         var tg_cl = event.target.getAttribute ("class");
