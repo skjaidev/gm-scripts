@@ -2,7 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110629-1
+ * Version: v20110810-1
  *
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license version 2.
@@ -14,7 +14,7 @@
 // @namespace       http://jaidev.info/home/hacks/gmailUnlabelled
 // @description     This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include         http*://mail.google.com/*
-// @version         v20110607-3
+// @version         v20110810-1
 // less
 // ==/UserScript==
 // Control parameters -- tweak in about:config
@@ -26,8 +26,6 @@ var L_VER = 3;
 var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
-var SID = ":re";
-var SID2 = ":rf";
 var SIDC = "GcwpPb-hsoKDf nr";
 var exclude = new Array (
   "INBOX",
@@ -75,7 +73,7 @@ function gmailUnlabelled () {
         return;
       }
       var label_none = menu_div.firstChild.lastChild.cloneNode (true);
-      var lna = label_none.firstChild.lastChild.firstChild;
+      var lna = label_none.firstChild.firstChild.firstChild.firstChild;
       lna.setAttribute ("id", "label_none");
       lna.innerHTML = "<b>Unlabelled</b>";
       lna.href = "";
@@ -107,9 +105,18 @@ function gmailUnlabelled () {
             }
           }
         }
-        var srch_ip = this.ownerDocument.getElementById (SID);
-        if (!srch_ip || srch_ip.getAttribute ('class') != SIDC) {
-            srch_ip = this.ownerDocument.getElementById (SID2);
+        var expr = ".//input[contains (concat (' ', @class, ' '), ' " + SIDC 
+            + " ')]";
+        var srch_ip = root.evaluate (expr, root, null, 
+            XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext ();
+        if (!srch_ip) {
+            if (gu_retries < 3) {
+              window.setTimeout (gmailUnlabelled, 250);
+            }
+            else {
+              doLog (L_VER, "Failed to initialize - Retry limit exceeded.");
+            }
+            return;
         }
         srch_ip.value = QS;
         srch_ip.focus ();
@@ -125,9 +132,18 @@ function gmailUnlabelled () {
         srch_ip.dispatchEvent (evt);
       }, true);
       menu_div.firstChild.insertBefore (label_none, null);
-      var srch_ip = root.getElementById (SID);
-      if (!srch_ip || srch_ip.getAttribute ('class') != SIDC) {
-        srch_ip = root.getElementById (SID2);
+      var expr = ".//input[contains (concat (' ', @class, ' '), ' " + SIDC 
+          + " ')]";
+      var srch_ip = root.evaluate (expr, root, null, 
+          XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext ();
+      if (!srch_ip) {
+          if (gu_retries < 3) {
+            window.setTimeout (gmailUnlabelled, 250);
+          }
+          else {
+            doLog (L_VER, "Failed to initialize - Retry limit exceeded.");
+          }
+          return;
       }
       srch_ip.addEventListener ("keypress", function (event) {
         if (event.keyCode == 0x0D && event.charCode == 0 && 
