@@ -2,7 +2,7 @@
  * to search for unlabelled conversations
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110810-1
+ * Version: v20110824-1
  *
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license version 2.
@@ -14,7 +14,7 @@
 // @namespace       http://jaidev.info/home/hacks/gmailUnlabelled
 // @description     This script adds 'Unlabelled' at the end of the labels list to search for unlabelled conversations. This version is for the "new" version of gmail (Nov 2007).
 // @include         http*://mail.google.com/*
-// @version         v20110810-1
+// @version         v20110824-1
 // less
 // ==/UserScript==
 // Control parameters -- tweak in about:config
@@ -97,9 +97,18 @@ function gmailUnlabelled () {
             if (excludes.indexOf (":" + lname + ":") == -1) {
                 var href = labs.getAttribute ('href');
                 var qs = href.substr (href.indexOf ("#", href) + 7);
-                qs = qs.replace ("\%2F", "-");
-                qs = qs.replace ("\%5B", "[");
-                qs = qs.replace ("\%5D", "]");
+                while(qs.indexOf("\%2F", 0) != -1) {
+                    qs = qs.replace ("\%2F", "-");
+                }
+                while(qs.indexOf("\%5B", 0) != -1) {
+                    qs = qs.replace ("\%5B", "[");
+                }
+                while(qs.indexOf("\%5D", 0) != -1) {
+                    qs = qs.replace ("\%5D", "]");
+                }
+                while(qs.indexOf("+", 0) != -1) {
+                    qs = qs.replace ("+", "-");
+                }
                 QS = QS + ' -label:' + 
                         qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
             }
@@ -165,9 +174,18 @@ function gmailUnlabelled () {
                 if (excludes.indexOf (":" + lname + ":") == -1) {
                     var href = labs.getAttribute ('href');
                     var qs = href.substr (href.indexOf ("#", href) + 7);
-                    qs = qs.replace ("\%2F", "-");
-                    qs = qs.replace ("\%5B", "[");
-                    qs = qs.replace ("\%5D", "]");
+                    while(qs.indexOf("\%2F", 0) != -1) {
+                        qs = qs.replace ("\%2F", "-");
+                    }
+                    while(qs.indexOf("\%5B", 0) != -1) {
+                        qs = qs.replace ("\%5B", "[");
+                    }
+                    while(qs.indexOf("\%5D", 0) != -1) {
+                        qs = qs.replace ("\%5D", "]");
+                    }
+                    while(qs.indexOf("+", 0) != -1) {
+                        qs = qs.replace ("+", "-");
+                    }
                     QS = QS + ' -label:' + 
                             qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
                 }
@@ -206,9 +224,18 @@ function gmailUnlabelled () {
                 if (excludes.indexOf (":" + lname + ":") == -1) {
                     var href = labs.getAttribute ('href');
                     var qs = href.substr (href.indexOf ("#", href) + 7);
+                    while(qs.indexOf("\%2F", 0) != -1) {
                     qs = qs.replace ("\%2F", "-");
-                    qs = qs.replace ("\%5B", "[");
-                    qs = qs.replace ("\%5D", "]");
+                    }
+                    while(qs.indexOf("\%5B", 0) != -1) {
+                        qs = qs.replace ("\%5B", "[");
+                    }
+                    while(qs.indexOf("\%5D", 0) != -1) {
+                        qs = qs.replace ("\%5D", "]");
+                    }
+                    while(qs.indexOf("+", 0) != -1) {
+                        qs = qs.replace ("+", "-");
+                    }
                     QS = QS + ' -label:' + 
                             qs.replace (/[/\ &]/g, '-').replace(/-\(\d+\)$/, "");
                 }
