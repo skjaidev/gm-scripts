@@ -26,7 +26,7 @@ var L_VER = 3;
 var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
-var SIDC = "GcwpPb-hsoKDf nr";
+var SIDC = "w-as1 nr";
 var exclude = new Array (
   "INBOX",
   "BUZZ",
