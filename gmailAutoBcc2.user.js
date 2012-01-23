@@ -2,7 +2,7 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20110713-1
+ * Version: v20120122-1
  * 
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license version 2.
@@ -15,7 +15,7 @@
 // @description This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/mail/*
 // @include     http*://mail.google.com/a/*
-// @version     v20110713-1
+// @version     v20120122-1
 // ==/UserScript==
 
 // Control parameters -- tweak in about:config
@@ -27,7 +27,7 @@
 //                                     identities or different gmail accounts
 // gBccLogging = 0-3 : Set log level (0-Disable, 1-Errors, 2-Warnings, 3-Verbose)
 //
-
+var redo_copy = 0;
 var force_popup = false;        /* For non-firefox users */
 var gmail = null;
 var logging = 0;
@@ -37,9 +37,9 @@ var L_VER = 3;
 var ga_retries = 0;
 var TOCLS = "dK nr";
 var TOLISTCLS = "am";
-var REBTN1 = "J-Zh-I J-J5-Ji J-Zh-I-Js-Zj GZ L3";
-var REBTN2 = "cKWzSc mD";
-var FWBTN2 = "XymfBd mD";
+var REBTN1 = "T-I J-J5-Ji T-I-Js-IF aaq T-I-ax7 L3";
+var REBTN2 = "mG";
+//var FWBTN2 = "XymfBd mD";
 var RABTN = "b7 J-M";
 function gBccLog (level, logmsg) {
   if (logging == 0) {
@@ -121,7 +121,7 @@ function addBcc (tgt) {
   if (mapFrom == true && from) {
     gBccLog (L_VER, "Mapping identities");
     var email = GM_getValue ('gBccMail_' + from);
-    if (gStatus == "gBccDone") {
+    if (gStatus == "gBccDone" && redo_copy == 0) {
       if (tgt.nodeName == 'SELECT') {
         var lue = GM_getValue ('gBccLU');
         if (lue == null) {
@@ -161,7 +161,7 @@ function addBcc (tgt) {
   }
   else {
     gBccLog (L_VER, "Not mapping");
-    if (gStatus == "gBccDone") {
+    if (gStatus == "gBccDone" && redo_copy == 0) {
       /* Don't insert again! */
       gBccLog (L_VER, "Already copied");
       return;
@@ -178,6 +178,7 @@ function addBcc (tgt) {
       GM_setValue('gBccMapFromAddress', true); // TRUE by default
   }
   /* Should we confirm? */
+  redo_copy = 0;
   var popup = GM_getValue ('gBccPopup');
   if ((popup == true || force_popup == true) && email != "" ) {
     if (confirm("Do you want to add BCC to " + email + "?") == false) {
@@ -230,12 +231,13 @@ function gBccInit ()
           gBccLog (L_VER, "Trigger = field");
           window.setTimeout (addBcc, 500, event.target);
         }
-        else if (tg_cl.match (REBTN1) || tg_cl.match (REBTN2) ||
-            tg_cl.match (RABTN) || tg_cl.match (FWBTN2)) {
+        else if (tg_cl.match (REBTN1) || 
+            tg_cl.match (RABTN)) {
           gBccLog (L_VER, "Trigger = timeout");
           window.setTimeout (addBcc, 500, event.target);
         }
         else {
+        //gBccLog (L_VER, "blur: " + tg_cl);
           return;
         }
       }
@@ -250,16 +252,21 @@ function gBccInit ()
         window.setTimeout (addBcc, 500, event.target);
       }
     }, true);
-/*    root.addEventListener ("click", function (event) {
+    root.addEventListener ("click", function (event) {
       if (typeof (event.target.getAttribute) == 'function') {
         var tg_cl = event.target.getAttribute ("class");
-        if (tg_cl.match (TOLISTCLS)) {
-          gBccLog (L_VER, "Trigger = abook");
-          addBcc (event.target);
+        if (tg_cl.match (REBTN2))
+        {
+          gBccLog (L_VER, "CLICK: " + tg_cl);
+          redo_copy = 1;
+            window.setTimeout (addBcc, 500, event.target);
+        }
+        else {
+          //gBccLog (L_VER, "CLICK: " + tg_cl);
         }
       }
     }, true);
-*/
+
     gBccLog (L_VER, "Initialized Script");
   }
   catch (ex) {
