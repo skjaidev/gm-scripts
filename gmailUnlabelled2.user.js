@@ -26,7 +26,7 @@ var L_VER = 3;
 var gu_retries = 0;
 var MMC = "LrBjie";
 var LC = "n0"
-var SIDC = "w-as1 nr";
+var SIDC = "gbqfif";
 var exclude = new Array (
   "INBOX",
   "BUZZ",
@@ -62,13 +62,9 @@ function gmailUnlabelled () {
       var menu_div = root.evaluate (expr, root, null, 
           XPathResult.ORDERED_NODE_ITERATOR_TYPE, null).iterateNext ();
       if (!menu_div) {
-        if (gu_retries < 3) {
+        if (gu_retries < 5) {
           gu_retries ++;
-          doLog (L_VER, "Triggering retry.");
-          window.setTimeout (gmailUnlabelled, 250);
-        }
-        else {
-          doLog (L_VER, "Failed to initialize - Retry limit exceeded.");
+          window.setTimeout (gmailUnlabelled, 750);
         }
         return;
       }
@@ -123,7 +119,7 @@ function gmailUnlabelled () {
               window.setTimeout (gmailUnlabelled, 250);
             }
             else {
-              doLog (L_VER, "Failed to initialize - Retry limit exceeded.");
+              doLog (L_VER, "Failed to initialize - Retry limit exceeded. 2");
             }
             return;
         }
@@ -150,7 +146,7 @@ function gmailUnlabelled () {
             window.setTimeout (gmailUnlabelled, 250);
           }
           else {
-            doLog (L_VER, "Failed to initialize - Retry limit exceeded.");
+            doLog (L_VER, "Failed to initialize - Retry limit exceeded. 3");
           }
           return;
       }
