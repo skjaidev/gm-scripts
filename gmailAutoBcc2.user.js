@@ -2,7 +2,7 @@
  * a gmail address to a specified email address
  *
  * Author: Jaidev K Sridhar mail<AT>jaidev<DOT>info
- * Version: v20120122-1
+ * Version: v20130510-1
  * 
  * Copyright (c) 2005-2011, Jaidev K Sridhar
  * Released under the GPL license version 2.
@@ -15,7 +15,7 @@
 // @description This greasemonkey script automatically BCCs (or CCs) outgoing email from a gmail address to a specified email address. This version is for the "new" version of gmail (Nov 2007).
 // @include     http*://mail.google.com/mail/*
 // @include     http*://mail.google.com/a/*
-// @version     v20120122-1
+// @version     v20130510-1
 // ==/UserScript==
 
 // Control parameters -- tweak in about:config
@@ -27,6 +27,7 @@
 //                                     identities or different gmail accounts
 // gBccLogging = 0-3 : Set log level (0-Disable, 1-Errors, 2-Warnings, 3-Verbose)
 //
+
 var redo_copy = 0;
 var force_popup = false;        /* For non-firefox users */
 var gmail = null;
@@ -41,241 +42,248 @@ var REBTN1 = "T-I J-J5-Ji T-I-Js-IF aaq T-I-ax7 L3";
 var REBTN2 = "mG";
 //var FWBTN2 = "XymfBd mD";
 var RABTN = "b7 J-M";
+var SENDTOOLTIP = "Send";
+
 function gBccLog (level, logmsg) {
-  if (logging == 0) {
-    logging = GM_getValue ('gBccLogging');
-    if (logging == undefined) {
-      logging = 1;
-      GM_setValue ('gBccLogging', logging);
+    if (logging == 0) {
+	logging = GM_getValue ('gBccLogging');
+	if (logging == undefined) {
+	    logging = 1;
+	    GM_setValue ('gBccLogging', logging);
+	}
     }
-  }
-  if (logging >= level) {
-    var d = new Date();
-    GM_log ("<" + level + ">[" + d.toLocaleTimeString() + "] " + logmsg);
-  }
+    if (logging >= level) {
+	var d = new Date();
+	GM_log ("<" + level + ">[" + d.toLocaleTimeString() + "] " + logmsg);
+    }
 }
 
-function addBcc (tgt) {
-  var enabled = GM_getValue('gBccEnabled');
-  if (enabled == false) {
-    gBccLog (L_VER, "Script disabled");
-    return;
-  }
-  else if (enabled != true) {
-    /* We're probably running for the first time */
-    GM_setValue('gBccEnabled', true);
-    GM_setValue('gBccPopup', false); // FALSE by default
-    GM_setValue('gBccMapFromAddress', true); // TRUE by default 
-    GM_setValue ('gBccLogging', 1);
-    enabled = true;
-  }
-  var form;
-  var forms = tgt.ownerDocument.getElementsByTagName ('form');
-  for (var i = 0; i < forms.length; i++) {
-    if (forms[i].elements.namedItem ('bcc')) {
-      form = forms[i];
-      break;
+function addBcc (tgt, oD) {
+    var enabled = GM_getValue('gBccEnabled');
+    if (enabled == false) {
+	gBccLog (L_VER, "Script disabled");
+	return;
     }
-  }
-  //if (tgt.form) {
-  //  form = tgt.form;
-  //}
-  //else {
-  //  if (tgt.getAttribute ('class') == REBTN) {
-  //    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.firstChild.nextSibling.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
-  //  }
-  //  else if (tgt.getAttribute ('class') == RABTN) {
-  //    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.lastChild.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
-  //  }
-  //}
-  if (!form) {
-    gBccLog (L_ERR, "No form");
-    return;
-  }
-  var header = GM_getValue ('gBccHeader');
-  if (!header || !(header == "cc" || header == "bcc")) {
-    header = "bcc";
-    GM_setValue ('gBccHeader', "bcc");
-  }
-  gBccLog (L_VER, "Header = " + header);
-  var dst_field;
-  if (header == "cc")
-    dst_field = form.elements.namedItem('cc');
-  else 
-    dst_field = form.elements.namedItem('bcc');
-  if (!dst_field) {
-    gBccLog (L_ERR, "No dst");
-    return;
-  }
-  var gStatus = dst_field.getAttribute ('gid');
-  dst_field.setAttribute ('gid', "gBccDone");
-  /* Get the address to cc/bcc to */
-  var mapFrom = GM_getValue ('gBccMapFromAddress');
-  var remove = false;
-  if (form.elements.namedItem ('from')) {
-    var from = form.elements.namedItem('from').value;
-  }
-  else {
-    from = GM_getValue ('gBccCU');
-  }
-  if (mapFrom == true && from) {
-    gBccLog (L_VER, "Mapping identities");
-    var email = GM_getValue ('gBccMail_' + from);
-    if (gStatus == "gBccDone" && redo_copy == 0) {
-      if (tgt.nodeName == 'SELECT') {
-        var lue = GM_getValue ('gBccLU');
-        if (lue == null) {
-            remove = false;
-        }
-        else if (lue == email) {
-          gBccLog (L_VER, "Already copied");
-          return;
-        }
-        var lu = new RegExp (lue + "(, )?");
-        remove = true;
-      }
-      else {
-        return;
-      }
+    else if (enabled != true) {
+	/* We're probably running for the first time */
+	GM_setValue('gBccEnabled', true);
+	GM_setValue('gBccPopup', false); // FALSE by default
+	GM_setValue('gBccMapFromAddress', true); // TRUE by default 
+	GM_setValue ('gBccLogging', 1);
+	enabled = true;
     }
-    if (email == "disabled") {
-      gBccLog (L_VER, "Disabled for sender " + from);
-      if (remove == false)
-          return;
-      email = "";
+    var form;
+    var forms = oD.getElementsByTagName ('form');
+    for (var i = 0; i < forms.length; i++) {
+	if (forms[i].elements.namedItem ('bcc')) {
+	    form = forms[i];
+	    break;
+	}
     }
-    if (!email) {
-      email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
-      if (email == false) {
-        GM_setValue ('gBccMail_' + from, "disabled");
-        gBccLog (L_VER, "Disabling for sender " + from);
-        if (remove == false)
-            return;
-        email = "";
-      }
-      else {
-        GM_setValue ('gBccMail_' + from, email);
-        gBccLog (L_VER, "Enabling for sender " + from + "; Copying " + email);
-      }
+    //if (tgt.form) {
+    //  form = tgt.form;
+    //}
+    //else {
+    //  if (tgt.getAttribute ('class') == REBTN) {
+    //    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.firstChild.nextSibling.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
+    //  }
+    //  else if (tgt.getAttribute ('class') == RABTN) {
+    //    form = tgt.parentNode.parentNode.nextSibling.firstChild.firstChild.lastChild.lastChild.firstChild.lastChild.firstChild.firstChild.firstChild.nextSibling.firstChild;
+    //  }
+    //}
+    if (!form) {
+	gBccLog (L_ERR, "No form");
+	return;
     }
-  }
-  else {
-    gBccLog (L_VER, "Not mapping");
-    if (gStatus == "gBccDone" && redo_copy == 0) {
-      /* Don't insert again! */
-      gBccLog (L_VER, "Already copied");
-      return;
+    var header = GM_getValue ('gBccHeader');
+    if (!header || !(header == "cc" || header == "bcc")) {
+	header = "bcc";
+	GM_setValue ('gBccHeader', "bcc");
     }
-    var email = GM_getValue('gBccMail');
-    if (!email) {
-      email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
-      if (email == null || email == "" ) 
-        return;
-      GM_setValue('gBccMail', email);
-      gBccLog (L_VER, "Enabling default, copying " + email);
+    gBccLog (L_VER, "Header = " + header);
+    var dst_field;
+    if (header == "cc")
+	dst_field = form.elements.namedItem('cc');
+    else 
+	dst_field = form.elements.namedItem('bcc');
+    if (!dst_field) {
+	gBccLog (L_ERR, "No dst");
+	return;
     }
-    if (mapFrom != false) 
-      GM_setValue('gBccMapFromAddress', true); // TRUE by default
-  }
-  /* Should we confirm? */
-  redo_copy = 0;
-  var popup = GM_getValue ('gBccPopup');
-  if ((popup == true || force_popup == true) && email != "" ) {
-    if (confirm("Do you want to add BCC to " + email + "?") == false) {
-      gBccLog (L_VER, "Not copying");
-      return;
+    var gStatus = dst_field.getAttribute ('gid');
+    dst_field.setAttribute ('gid', "gBccDone");
+    /* Get the address to cc/bcc to */
+    var mapFrom = GM_getValue ('gBccMapFromAddress');
+    var remove = false;
+    if (form.elements.namedItem ('from')) {
+	var from = form.elements.namedItem('from').value;
     }
-  }
-  else if (popup != false) {
-    GM_setValue ('gBccPopup', false); // FALSE by default
-  }
-  if (dst_field.value) {
-    if (remove) {
-      var bcc_str = dst_field.value;
-      if (bcc_str.match (lu)) {
-        /* Remove old email */
-        var new_bcc_str = bcc_str.replace (lu, "");
-        var end = new RegExp ("(, )?$");
-        dst_field.value = new_bcc_str.replace (end, "");
-        gBccLog (L_VER, "Replaced " + lue + " with " + email);
-      }
+    else {
+	from = GM_getValue ('gBccCU');
     }
-  }
-  if (email == "")
-      return;
-  if (dst_field.value) {
-    dst_field.value = dst_field.value+", " +email;
-  }
-  else {
-    dst_field.value = email;
-  }
-  gBccLog (L_VER, "Copied " + email);
-  /* Don't repeat */
-  GM_setValue ('gBccLU', email);
+    if (mapFrom == true && from) {
+	gBccLog (L_VER, "Mapping identities");
+	var email = GM_getValue ('gBccMail_' + from);
+	if (gStatus == "gBccDone" && redo_copy == 0) {
+	    if (tgt.nodeName == 'SELECT') {
+		var lue = GM_getValue ('gBccLU');
+		if (lue == null) {
+		    remove = false;
+		}
+		else if (lue == email) {
+		    gBccLog (L_VER, "Already copied");
+		    return;
+		}
+		var lu = new RegExp (lue + "(, )?");
+		remove = true;
+	    }
+	    else {
+		return;
+	    }
+	}
+	if (email == "disabled") {
+	    gBccLog (L_VER, "Disabled for sender " + from);
+	    if (remove == false)
+		return;
+	    email = "";
+	}
+	if (!email) {
+	    email = prompt("gmailAutoBcc: Where do you want to bcc/cc your outgoing gmail sent from identity: " + from + "?\n\n Leave blank to disable gmailAutoBcc for this identity.");
+	    if (email == false) {
+		GM_setValue ('gBccMail_' + from, "disabled");
+		gBccLog (L_VER, "Disabling for sender " + from);
+		if (remove == false)
+		    return;
+		email = "";
+	    }
+	    else {
+		GM_setValue ('gBccMail_' + from, email);
+		gBccLog (L_VER, "Enabling for sender " + from + "; Copying " + email);
+	    }
+	}
+    }
+    else {
+	gBccLog (L_VER, "Not mapping");
+	if (gStatus == "gBccDone" && redo_copy == 0) {
+	    /* Don't insert again! */
+	    gBccLog (L_VER, "Already copied");
+	    return;
+	}
+	var email = GM_getValue('gBccMail');
+	if (!email) {
+	    email = prompt("gmailAutoBcc: Where do you want to bcc/cc all your outgoing gmail?");
+	    if (email == null || email == "" ) 
+		return;
+	    GM_setValue('gBccMail', email);
+	    gBccLog (L_VER, "Enabling default, copying " + email);
+	}
+	if (mapFrom != false) 
+	    GM_setValue('gBccMapFromAddress', true); // TRUE by default
+    }
+    /* Should we confirm? */
+    redo_copy = 0;
+    var popup = GM_getValue ('gBccPopup');
+    if ((popup == true || force_popup == true) && email != "" ) {
+	if (confirm("Do you want to add BCC to " + email + "?") == false) {
+	    gBccLog (L_VER, "Not copying");
+	    return;
+	}
+    }
+    else if (popup != false) {
+	GM_setValue ('gBccPopup', false); // FALSE by default
+    }
+    if (dst_field.value) {
+	if (remove) {
+	    var bcc_str = dst_field.value;
+	    if (bcc_str.match (lu)) {
+		/* Remove old email */
+		var new_bcc_str = bcc_str.replace (lu, "");
+		var end = new RegExp ("(, )?$");
+		dst_field.value = new_bcc_str.replace (end, "");
+		gBccLog (L_VER, "Replaced " + lue + " with " + email);
+	    }
+	}
+    }
+    if (email == "")
+	return;
+    if (dst_field.value) {
+	dst_field.value = dst_field.value+", " +email;
+    }
+    else {
+	dst_field.value = email;
+    }
+    gBccLog (L_VER, "Copied " + email);
+    /* Don't repeat */
+    GM_setValue ('gBccLU', email);
 }
+
 function gBccInit () 
 {
-  try {
-    if (typeof (GM_getValue) != 'function') {
-        GM_log ("gmailAutoBcc: Greasemonkey function not available. If on Google Chrome or Chromium, re-install the script through TamperScript.");
-    }
-    var root = document;
-    if (unsafeWindow.GLOBALS) {
-        GM_setValue ('gBccCU', unsafeWindow.GLOBALS[10]);
-    }
-    root.addEventListener ("blur", function(event) {
-      if (typeof (event.target.getAttribute) == 'function') {
-        var tg_cl = event.target.getAttribute ("class");
-        if (!tg_cl) return;
-        if (tg_cl.match (TOCLS)) {
-          gBccLog (L_VER, "Trigger = field");
-          window.setTimeout (addBcc, 500, event.target);
-        }
-        else if (tg_cl.match (REBTN1) || 
-            tg_cl.match (RABTN)) {
-          gBccLog (L_VER, "Trigger = timeout");
-          window.setTimeout (addBcc, 500, event.target);
-        }
-        else {
-        //gBccLog (L_VER, "blur: " + tg_cl);
-          return;
-        }
-      }
-    }, true);
-    root.addEventListener ("change", function (event) {
-      if (event.target.getAttribute ('name') == 'from') {
-        gBccLog (L_VER, "Trigger = sender change");
-        addBcc (event.target);
-      }
-      else if (event.target.getAttribute ('name') == 'to') {
-        gBccLog (L_VER, "Trigger = to");
-        window.setTimeout (addBcc, 500, event.target);
-      }
-    }, true);
-    root.addEventListener ("click", function (event) {
-      if (typeof (event.target.getAttribute) == 'function') {
-        var tg_cl = event.target.getAttribute ("class");
-        if (tg_cl.match (REBTN2))
-        {
-          gBccLog (L_VER, "CLICK: " + tg_cl);
-          redo_copy = 1;
-            window.setTimeout (addBcc, 500, event.target);
-        }
-        else {
-          //gBccLog (L_VER, "CLICK: " + tg_cl);
-        }
-      }
-    }, true);
+    try {
+	if (typeof (GM_getValue) != 'function')  {
+            GM_log ("gmailAutoBcc: Greasemonkey function not available. If on Google Chrome or Chromium, re-install the script through TamperScript.");
+	}
+	var root = document;
+	if (unsafeWindow.GLOBALS) {
+            GM_setValue ('gBccCU', unsafeWindow.GLOBALS[10]);
+	}
+	root.addEventListener ("blur", function(event) {
+	    if (typeof (event.target.getAttribute) == 'function') {
+		var tg_cl = event.target.getAttribute ("class");
+		if (!tg_cl) return;
+		if (tg_cl.match (TOCLS)) {
+		    gBccLog (L_VER, "Trigger = field");
+		    window.setTimeout (addBcc, 500, event.target, event.target.ownerDocument);
+		}
+		else if (tg_cl.match (REBTN1) || 
+			 tg_cl.match (RABTN)) {
+		    gBccLog (L_VER, "Trigger = timeout");
+		    window.setTimeout (addBcc, 500, event.target, event.target.ownerDocument);
+		}
+		else {
+		    //gBccLog (L_VER, "blur: " + tg_cl);
+		    return;
+		}
+	    }
+	}, true);
+	root.addEventListener ("change", function (event) {
+	    if (event.target.getAttribute ('name') == 'from') {
+		gBccLog (L_VER, "Trigger = sender change");
+		addBcc (event.target, event.target.ownerDocument);
+	    }
+	    else if (event.target.getAttribute ('name') == 'to') {
+		gBccLog (L_VER, "Trigger = to");
+		window.setTimeout (addBcc, 500, event.target, event.target.ownerDocument);
+	    }
+	}, true);
+	root.addEventListener ("click", function (event) {
+	    if (typeof (event.target.getAttribute) == 'function') {
+		var tg_cl = event.target.getAttribute ("class");
+		if (tg_cl && tg_cl.match (REBTN2))
+		{
+		    gBccLog (L_VER, "CLICK: " + tg_cl);
+		    redo_copy = 1;
+		    window.setTimeout (addBcc, 500, event.target, event.target.ownerDocument);
+		}
+		else {
+		    //gBccLog (L_VER, "CLICK: " + tg_cl);
+		}
+		var tip = event.target.getAttribute("data-tooltip");
+		if (tip && tip.match (SENDTOOLTIP)) {
+		    addBcc(event.target, event.target.ownerDocument);
+		}
+	    }
+	}, true);
 
-    gBccLog (L_VER, "Initialized Script");
-  }
-  catch (ex) {
-    GM_log ("gmailAutoBcc: Exception '"+ ex.message);
-    if (ga_retries < 3) {
-      ga_retries ++;
-      window.setTimeout (gBccInit, 250);
+	gBccLog (L_VER, "Initialized Script");
     }
-  }
+    catch (ex) {
+	GM_log ("gmailAutoBcc: Exception '"+ ex.message);
+	if (ga_retries < 3) {
+	    ga_retries ++;
+	    window.setTimeout (gBccInit, 250);
+	}
+    }
 } /* gBccInit */
 
 window.setTimeout (gBccInit, 750);
